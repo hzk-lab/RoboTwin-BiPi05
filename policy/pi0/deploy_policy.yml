@@ -7,7 +7,7 @@ seed: null
 instruction_type: unseen
 
 # Add Parameters You Need
-train_config_name: null
-model_name: null
-checkpoint_id: 30000
+train_config_name: pi0_base_aloha_robotwin_lora
+model_name: pi0
+checkpoint_id: 4000
 pi0_step: 50

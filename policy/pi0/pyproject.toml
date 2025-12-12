@@ -67,6 +67,9 @@ dev = [
     "pynvml>=12.0.0",
 ]
 
+[tool.uv]
+override-dependencies = ["evdev==1.6.1"]
+
 
 [tool.uv.sources]
 openpi-client = { workspace = true }
@@ -140,3 +143,4 @@ build-backend = "hatchling.build"
 [tool.pytest.ini_options]
 markers = ["manual: should be run manually."]
 testpaths = ["src", "scripts", "packages"]
+
