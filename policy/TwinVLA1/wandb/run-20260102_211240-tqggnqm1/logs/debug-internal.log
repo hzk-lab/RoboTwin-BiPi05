@@ -1,0 +1,16 @@
+{"time":"2026-01-02T21:12:40.584839315+08:00","level":"INFO","msg":"using version","core version":"0.19.1"}
+{"time":"2026-01-02T21:12:40.58484773+08:00","level":"INFO","msg":"created symlink","path":"/data0/users/haoce/RoboTwin/policy/TwinVLA1/wandb/run-20260102_211240-tqggnqm1/logs/debug-core.log"}
+{"time":"2026-01-02T21:12:40.692615254+08:00","level":"INFO","msg":"created new stream","id":"tqggnqm1"}
+{"time":"2026-01-02T21:12:40.693150491+08:00","level":"INFO","msg":"stream: started","id":"tqggnqm1"}
+{"time":"2026-01-02T21:12:40.693163245+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"tqggnqm1"}
+{"time":"2026-01-02T21:12:40.693165316+08:00","level":"INFO","msg":"handler: started","stream_id":"tqggnqm1"}
+{"time":"2026-01-02T21:12:40.693192706+08:00","level":"INFO","msg":"sender: started","stream_id":"tqggnqm1"}
+{"time":"2026-01-02T21:12:41.440240347+08:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-01-02T21:13:18.308992788+08:00","level":"INFO","msg":"stream: closing","id":"tqggnqm1"}
+{"time":"2026-01-02T21:13:18.30901825+08:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-01-02T21:13:18.309465726+08:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-01-02T21:13:20.212078882+08:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-01-02T21:13:20.850557483+08:00","level":"INFO","msg":"handler: closed","stream_id":"tqggnqm1"}
+{"time":"2026-01-02T21:13:20.850603586+08:00","level":"INFO","msg":"writer: Close: closed","stream_id":"tqggnqm1"}
+{"time":"2026-01-02T21:13:20.850620986+08:00","level":"INFO","msg":"sender: closed","stream_id":"tqggnqm1"}
+{"time":"2026-01-02T21:13:20.850697163+08:00","level":"INFO","msg":"stream: closed","id":"tqggnqm1"}

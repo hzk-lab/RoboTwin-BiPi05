@@ -1348,3 +1348,462 @@ class PI0DualArmPytorch(nn.Module):
         right_out = right_out.to(dtype=torch.float32)
         
         return self.action_out_proj_left(left_out), self.action_out_proj_right(right_out)
+
+
+class PI0TripleVLMPytorch(nn.Module):
+    """Triple-VLM dual-arm architecture with:
+    
+    - 1 frozen Skill Selector VLM: decomposes task into left/right arm prompts
+    - 2 Per-Arm VLMs with LoRA: process arm-specific prompts + observations
+    - 2 frozen Action Experts: generate actions based on Per-Arm VLM outputs
+    - Gate Network: predicts α_t for cross-attention scaling
+    
+    Only the Per-Arm VLM LoRA parameters and Gate Network are trained.
+    """
+    
+    def __init__(self, config):
+        super().__init__()
+        self.config = config
+        self.pi05 = config.pi05
+        self.half_action_dim = config.half_action_dim  # 16
+        
+        # Get VLM configs
+        skill_selector_variant = getattr(config, 'skill_selector_variant', 'gemma_2b')
+        per_arm_vlm_left_variant = getattr(config, 'per_arm_vlm_left_variant', 'gemma_2b_lora')
+        per_arm_vlm_right_variant = getattr(config, 'per_arm_vlm_right_variant', 'gemma_2b_lora')
+        
+        skill_selector_config = _gemma.get_config(skill_selector_variant)
+        per_arm_vlm_left_config = _gemma.get_config(per_arm_vlm_left_variant)
+        per_arm_vlm_right_config = _gemma.get_config(per_arm_vlm_right_variant)
+        
+        # Get AE configs (frozen, no LoRA)
+        ae_left_variant = getattr(config, 'action_expert_left_variant', None) or config.action_expert_variant
+        ae_right_variant = getattr(config, 'action_expert_right_variant', None) or config.action_expert_variant
+        # Remove LoRA suffix if present (AEs should be frozen)
+        ae_left_variant = ae_left_variant.replace('_lora', '')
+        ae_right_variant = ae_right_variant.replace('_lora', '')
+        
+        ae_left_config = _gemma.get_config(ae_left_variant)
+        ae_right_config = _gemma.get_config(ae_right_variant)
+        
+        # ===== Initialize Components =====
+        
+        # 1. Skill Selector (frozen VLM)
+        from openpi.models_pytorch.skill_selector import SkillSelector
+        self.skill_selector = SkillSelector(
+            vlm_config=skill_selector_config,
+            num_query_tokens=getattr(config, 'task_decomposition_num_queries', 16),
+            num_heads=getattr(config, 'task_decomposition_num_heads', 8),
+            freeze_vlm=True,
+            freeze_queries=False,  # Query tokens are trainable
+            precision=config.dtype,
+        )
+        
+        # 2. Per-Arm VLMs (with LoRA)
+        from openpi.models_pytorch.per_arm_vlm import PerArmVLM
+        self.vlm_left = PerArmVLM(
+            vlm_config=per_arm_vlm_left_config,
+            use_lora=True,
+            freeze_backbone=True,
+            precision=config.dtype,
+        )
+        self.vlm_right = PerArmVLM(
+            vlm_config=per_arm_vlm_right_config,
+            use_lora=True,
+            freeze_backbone=True,
+            precision=config.dtype,
+        )
+        
+        # 3. Action Experts (frozen, no LoRA)
+        from transformers.models.gemma import GemmaForCausalLM
+        from transformers.models.auto import CONFIG_MAPPING
+        
+        # Create AE left config
+        ae_left_config_hf = CONFIG_MAPPING["gemma"]()
+        ae_left_config_hf.hidden_size = ae_left_config.width
+        ae_left_config_hf.intermediate_size = ae_left_config.mlp_dim
+        ae_left_config_hf.num_attention_heads = ae_left_config.num_heads
+        ae_left_config_hf.head_dim = ae_left_config.head_dim
+        ae_left_config_hf.num_hidden_layers = ae_left_config.depth
+        ae_left_config_hf.num_key_value_heads = ae_left_config.num_kv_heads
+        ae_left_config_hf.hidden_activation = "gelu_pytorch_tanh"
+        ae_left_config_hf.use_adarms = self.pi05
+        
+        # Create AE right config
+        ae_right_config_hf = CONFIG_MAPPING["gemma"]()
+        ae_right_config_hf.hidden_size = ae_right_config.width
+        ae_right_config_hf.intermediate_size = ae_right_config.mlp_dim
+        ae_right_config_hf.num_attention_heads = ae_right_config.num_heads
+        ae_right_config_hf.head_dim = ae_right_config.head_dim
+        ae_right_config_hf.num_hidden_layers = ae_right_config.depth
+        ae_right_config_hf.num_key_value_heads = ae_right_config.num_kv_heads
+        ae_right_config_hf.hidden_activation = "gelu_pytorch_tanh"
+        ae_right_config_hf.use_adarms = self.pi05
+        
+        self.ae_left = GemmaForCausalLM(config=ae_left_config_hf)
+        self.ae_right = GemmaForCausalLM(config=ae_right_config_hf)
+        
+        # Freeze AEs
+        for param in self.ae_left.parameters():
+            param.requires_grad = False
+        for param in self.ae_right.parameters():
+            param.requires_grad = False
+        
+        # Store dimensions
+        self.vlm_dim = skill_selector_config.width
+        self.ae_dim = ae_left_config.width
+        
+        # 4. Gate Network
+        self.peca_enabled = getattr(config, 'peca_enabled', True)
+        if self.peca_enabled:
+            self.gate_network = GateNetwork(
+                hidden_dim=self.ae_dim,
+                mlp_hidden=getattr(config, 'gate_mlp_hidden', 256),
+                dropout=0.0,
+                precision=config.dtype,
+            )
+            self.peca_lambda = getattr(config, 'peca_lambda', 0.1)
+            self.l1_lambda = getattr(config, 'l1_lambda', 0.01)
+            self.sticky_lambda = getattr(config, 'sticky_lambda', 0.01)
+            self.gate_threshold = getattr(config, 'gate_threshold', 0.5)
+        
+        # 5. Projection layers
+        # VLM -> AE dimension adapters (if dimensions differ)
+        if self.vlm_dim != self.ae_dim:
+            self.vlm_to_ae_proj_left = nn.Linear(self.vlm_dim, self.ae_dim)
+            self.vlm_to_ae_proj_right = nn.Linear(self.vlm_dim, self.ae_dim)
+        else:
+            self.vlm_to_ae_proj_left = nn.Identity()
+            self.vlm_to_ae_proj_right = nn.Identity()
+        
+        # Action projections
+        self.action_in_proj_left = nn.Linear(self.half_action_dim, self.ae_dim)
+        self.action_in_proj_right = nn.Linear(self.half_action_dim, self.ae_dim)
+        self.action_out_proj_left = nn.Linear(self.ae_dim, self.half_action_dim)
+        self.action_out_proj_right = nn.Linear(self.ae_dim, self.half_action_dim)
+        
+        # Time embeddings
+        if self.pi05:
+            self.time_mlp_in = nn.Linear(self.ae_dim, self.ae_dim)
+            self.time_mlp_out = nn.Linear(self.ae_dim, self.ae_dim)
+        else:
+            self.state_proj = nn.Linear(config.action_dim, self.ae_dim)
+            self.action_time_mlp_in_left = nn.Linear(2 * self.ae_dim, self.ae_dim)
+            self.action_time_mlp_out_left = nn.Linear(self.ae_dim, self.ae_dim)
+            self.action_time_mlp_in_right = nn.Linear(2 * self.ae_dim, self.ae_dim)
+            self.action_time_mlp_out_right = nn.Linear(self.ae_dim, self.ae_dim)
+        
+        # Cross-attention layers for AE communication
+        self.ae_cross_attn_left = nn.MultiheadAttention(
+            self.ae_dim, num_heads=8, dropout=0.0, batch_first=True
+        )
+        self.ae_cross_attn_right = nn.MultiheadAttention(
+            self.ae_dim, num_heads=8, dropout=0.0, batch_first=True
+        )
+        
+        torch.set_float32_matmul_precision("high")
+        self.gradient_checkpointing_enabled = False
+        
+        logging.info("Initialized PI0TripleVLMPytorch with:")
+        logging.info(f"  - Skill Selector: {skill_selector_variant} (frozen)")
+        logging.info(f"  - Per-Arm VLMs: L={per_arm_vlm_left_variant}, R={per_arm_vlm_right_variant} (LoRA trainable)")
+        logging.info(f"  - Action Experts: L={ae_left_variant}, R={ae_right_variant} (frozen)")
+        logging.info(f"  - PECA enabled: {self.peca_enabled}")
+    
+    def gradient_checkpointing_enable(self):
+        """Enable gradient checkpointing."""
+        self.gradient_checkpointing_enabled = True
+        logging.info("Enabled gradient checkpointing for PI0TripleVLMPytorch")
+    
+    def gradient_checkpointing_disable(self):
+        """Disable gradient checkpointing."""
+        self.gradient_checkpointing_enabled = False
+        logging.info("Disabled gradient checkpointing for PI0TripleVLMPytorch")
+    
+    def _preprocess_observation(self, observation, *, train=True):
+        """Preprocess observation."""
+        observation = _preprocessing.preprocess_observation_pytorch(observation, train=train)
+        return (
+            list(observation.images.values()),
+            list(observation.image_masks.values()),
+            observation.tokenized_prompt,
+            observation.tokenized_prompt_mask,
+            observation.state,
+        )
+    
+    def sample_noise(self, shape, device):
+        return torch.normal(mean=0.0, std=1.0, size=shape, dtype=torch.float32, device=device)
+    
+    def sample_time(self, bsize, device):
+        time_beta = sample_beta(1.5, 1.0, bsize, device)
+        time = time_beta * 0.999 + 0.001
+        return time.to(dtype=torch.float32, device=device)
+    
+    def embed_prefix(self, images, img_masks, lang_tokens, lang_masks):
+        """Embed images and language tokens for VLM input."""
+        embs = []
+        pad_masks = []
+        att_masks = []
+        
+        # Process images
+        for img, img_mask in zip(images, img_masks, strict=True):
+            img_emb = self.skill_selector.embed_image(img)
+            embs.append(img_emb)
+            
+            bsize, num_patches, _ = img_emb.shape
+            img_pad_mask = torch.ones(bsize, num_patches, dtype=torch.bool, device=img.device)
+            img_att_mask = torch.zeros(bsize, num_patches, dtype=torch.int32, device=img.device)
+            
+            # Apply image mask
+            img_mask_expanded = img_mask[:, None].expand(-1, num_patches)
+            img_pad_mask = img_pad_mask & img_mask_expanded
+            
+            pad_masks.append(img_pad_mask)
+            att_masks.append(img_att_mask)
+        
+        # Process language tokens
+        lang_emb = self.skill_selector.embed_language_tokens(lang_tokens)
+        embs.append(lang_emb)
+        pad_masks.append(lang_masks)
+        
+        lang_att_mask = torch.ones(lang_masks.shape, dtype=torch.int32, device=lang_masks.device)
+        att_masks.append(lang_att_mask)
+        
+        # Concatenate
+        prefix_embs = torch.cat(embs, dim=1)
+        prefix_pad_masks = torch.cat(pad_masks, dim=1)
+        prefix_att_masks = torch.cat(att_masks, dim=1)
+        
+        return prefix_embs, prefix_pad_masks, prefix_att_masks
+    
+    def forward(self, observation, actions):
+        """Training forward pass.
+        
+        Returns:
+            Dictionary containing losses and metrics
+        """
+        # Preprocess
+        images, img_masks, lang_tokens, lang_masks, state = self._preprocess_observation(
+            observation, train=True
+        )
+        
+        # Sample time and noise
+        bsize = actions.shape[0]
+        device = actions.device
+        time = self.sample_time(bsize, device)
+        noise = self.sample_noise(actions.shape, device)
+        
+        # Noisy actions
+        x_t = (1 - time[:, None, None]) * noise + time[:, None, None] * actions
+        
+        # Split actions for left/right arms
+        x_t_left = x_t[..., :self.half_action_dim]
+        x_t_right = x_t[..., self.half_action_dim:]
+        
+        # Get velocity target
+        v_target = actions - noise
+        v_target_left = v_target[..., :self.half_action_dim]
+        v_target_right = v_target[..., self.half_action_dim:]
+        
+        # === Step 1: Skill Selector generates arm-specific prompts ===
+        prefix_embs, prefix_pad_masks, prefix_att_masks = self.embed_prefix(
+            images, img_masks, lang_tokens, lang_masks
+        )
+        left_prompt, right_prompt = self.skill_selector(prefix_embs, prefix_pad_masks)
+        
+        # === Step 2: Per-Arm VLMs process prompts + observations ===
+        # Get observation embeddings for each arm (use same images)
+        obs_embs = prefix_embs  # Reuse prefix embeddings as observation
+        
+        vlm_left_out = self.vlm_left(left_prompt, obs_embs)
+        vlm_right_out = self.vlm_right(right_prompt, obs_embs)
+        
+        # Project VLM outputs to AE dimension if needed
+        vlm_left_out = self.vlm_to_ae_proj_left(vlm_left_out)
+        vlm_right_out = self.vlm_to_ae_proj_right(vlm_right_out)
+        
+        # === Step 3: Action Experts with gated cross-attention ===
+        # Embed actions
+        left_action_embs = self.action_in_proj_left(x_t_left)
+        right_action_embs = self.action_in_proj_right(x_t_right)
+        
+        # Time conditioning
+        if self.pi05:
+            time_emb = create_sinusoidal_pos_embedding(time, self.ae_dim, 1e-2, 1.0, device)
+            adarms_cond = self.time_mlp_out(F.gelu(self.time_mlp_in(time_emb)))
+        else:
+            time_emb = create_sinusoidal_pos_embedding(time, self.ae_dim, 1e-2, 1.0, device)
+            state_emb = self.state_proj(state)
+            combined_left = torch.cat([time_emb, state_emb], dim=-1)
+            combined_right = torch.cat([time_emb, state_emb], dim=-1)
+            adarms_cond_left = self.action_time_mlp_out_left(
+                F.gelu(self.action_time_mlp_in_left(combined_left))
+            )
+            adarms_cond_right = self.action_time_mlp_out_right(
+                F.gelu(self.action_time_mlp_in_right(combined_right))
+            )
+            adarms_cond = (adarms_cond_left, adarms_cond_right)
+        
+        # Concatenate VLM output with action embeddings for AE input
+        ae_input_left = torch.cat([vlm_left_out, left_action_embs], dim=1)
+        ae_input_right = torch.cat([vlm_right_out, right_action_embs], dim=1)
+        
+        # Forward through AEs (with cross-attention if PECA)
+        if self.peca_enabled:
+            # Get AE hidden states first (without cross-attention)
+            ae_left_hidden = self.ae_left.model(inputs_embeds=ae_input_left).last_hidden_state
+            ae_right_hidden = self.ae_right.model(inputs_embeds=ae_input_right).last_hidden_state
+            
+            # Compute α_t from hidden states
+            alpha_t = self.gate_network(ae_left_hidden, ae_right_hidden)
+            
+            # Cross-attention between AEs (scaled by 1 - α_t)
+            # α_t = 1 means independent, α_t = 0 means full cross-attention
+            cross_scale = 1.0 - alpha_t
+            
+            # Left AE attends to Right AE
+            cross_left, _ = self.ae_cross_attn_left(
+                query=ae_left_hidden,
+                key=ae_right_hidden,
+                value=ae_right_hidden,
+            )
+            ae_left_out = ae_left_hidden + cross_scale * cross_left
+            
+            # Right AE attends to Left AE
+            cross_right, _ = self.ae_cross_attn_right(
+                query=ae_right_hidden,
+                key=ae_left_hidden,
+                value=ae_left_hidden,
+            )
+            ae_right_out = ae_right_hidden + cross_scale * cross_right
+        else:
+            # No PECA, just forward through AEs
+            ae_left_out = self.ae_left.model(inputs_embeds=ae_input_left).last_hidden_state
+            ae_right_out = self.ae_right.model(inputs_embeds=ae_input_right).last_hidden_state
+            alpha_t = None
+        
+        # Extract action outputs
+        ae_left_out = ae_left_out[:, -self.config.action_horizon:]
+        ae_right_out = ae_right_out[:, -self.config.action_horizon:]
+        
+        # Project to action space
+        v_pred_left = self.action_out_proj_left(ae_left_out.to(torch.float32))
+        v_pred_right = self.action_out_proj_right(ae_right_out.to(torch.float32))
+        
+        # Compute BC losses
+        loss_left = F.mse_loss(v_pred_left, v_target_left)
+        loss_right = F.mse_loss(v_pred_right, v_target_right)
+        bc_loss = (loss_left + loss_right) / 2
+        
+        # Build loss dictionary
+        losses = {"bc_loss": bc_loss}
+        
+        if self.peca_enabled and alpha_t is not None:
+            # L1 regularization on α
+            l1_loss = self.l1_lambda * alpha_t.mean()
+            losses["l1_loss"] = l1_loss
+            losses["alpha_mean"] = alpha_t.mean().detach()
+            
+            # Total loss
+            losses["total_loss"] = bc_loss + l1_loss
+        else:
+            losses["total_loss"] = bc_loss
+        
+        return losses
+    
+    @torch.inference_mode()
+    def sample_actions(self, observation, num_steps=10, noise_scale=1.0):
+        """Sample actions using flow matching."""
+        images, img_masks, lang_tokens, lang_masks, state = self._preprocess_observation(
+            observation, train=False
+        )
+        
+        bsize = state.shape[0]
+        device = state.device
+        
+        # Initialize with noise
+        shape = (bsize, self.config.action_horizon, self.config.action_dim)
+        x_t = self.sample_noise(shape, device) * noise_scale
+        
+        # Get arm-specific prompts from Skill Selector
+        prefix_embs, prefix_pad_masks, _ = self.embed_prefix(
+            images, img_masks, lang_tokens, lang_masks
+        )
+        left_prompt, right_prompt = self.skill_selector(prefix_embs, prefix_pad_masks)
+        
+        # Per-Arm VLMs
+        obs_embs = prefix_embs
+        vlm_left_out = self.vlm_left(left_prompt, obs_embs)
+        vlm_right_out = self.vlm_right(right_prompt, obs_embs)
+        vlm_left_out = self.vlm_to_ae_proj_left(vlm_left_out)
+        vlm_right_out = self.vlm_to_ae_proj_right(vlm_right_out)
+        
+        # Flow matching loop
+        dt = 1.0 / num_steps
+        for step in range(num_steps):
+            t = step * dt
+            time = torch.full((bsize,), t, device=device)
+            
+            x_t_left = x_t[..., :self.half_action_dim]
+            x_t_right = x_t[..., self.half_action_dim:]
+            
+            # Embed actions
+            left_action_embs = self.action_in_proj_left(x_t_left)
+            right_action_embs = self.action_in_proj_right(x_t_right)
+            
+            # Time conditioning
+            if self.pi05:
+                time_emb = create_sinusoidal_pos_embedding(time, self.ae_dim, 1e-2, 1.0, device)
+                adarms_cond = self.time_mlp_out(F.gelu(self.time_mlp_in(time_emb)))
+            else:
+                time_emb = create_sinusoidal_pos_embedding(time, self.ae_dim, 1e-2, 1.0, device)
+                state_emb = self.state_proj(state)
+                combined = torch.cat([time_emb, state_emb], dim=-1)
+                adarms_cond = self.action_time_mlp_out_left(
+                    F.gelu(self.action_time_mlp_in_left(combined))
+                )
+            
+            # AE forward
+            ae_input_left = torch.cat([vlm_left_out, left_action_embs], dim=1)
+            ae_input_right = torch.cat([vlm_right_out, right_action_embs], dim=1)
+            
+            ae_left_hidden = self.ae_left.model(inputs_embeds=ae_input_left).last_hidden_state
+            ae_right_hidden = self.ae_right.model(inputs_embeds=ae_input_right).last_hidden_state
+            
+            if self.peca_enabled:
+                alpha_t = self.gate_network(ae_left_hidden, ae_right_hidden)
+                # Hard gate at inference
+                alpha_hard = (alpha_t > self.gate_threshold).float()
+                cross_scale = 1.0 - alpha_hard
+                
+                cross_left, _ = self.ae_cross_attn_left(
+                    query=ae_left_hidden, key=ae_right_hidden, value=ae_right_hidden
+                )
+                ae_left_out = ae_left_hidden + cross_scale * cross_left
+                
+                cross_right, _ = self.ae_cross_attn_right(
+                    query=ae_right_hidden, key=ae_left_hidden, value=ae_left_hidden
+                )
+                ae_right_out = ae_right_hidden + cross_scale * cross_right
+            else:
+                ae_left_out = ae_left_hidden
+                ae_right_out = ae_right_hidden
+            
+            # Extract and project
+            ae_left_out = ae_left_out[:, -self.config.action_horizon:]
+            ae_right_out = ae_right_out[:, -self.config.action_horizon:]
+            
+            v_pred_left = self.action_out_proj_left(ae_left_out.to(torch.float32))
+            v_pred_right = self.action_out_proj_right(ae_right_out.to(torch.float32))
+            
+            # Update x_t
+            x_t_left = x_t_left + dt * v_pred_left
+            x_t_right = x_t_right + dt * v_pred_right
+            x_t = torch.cat([x_t_left, x_t_right], dim=-1)
+        
+        # Extract actual arm dimensions from padded output
+        actual_arm_dim = self.config.actual_arm_dim
+        left_valid = x_t[..., :actual_arm_dim]
+        right_valid = x_t[..., self.half_action_dim:self.half_action_dim + actual_arm_dim]
+        
+        return torch.cat([left_valid, right_valid], dim=-1)

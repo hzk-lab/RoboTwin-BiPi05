@@ -89,15 +89,35 @@ class AlohaInputs(transforms.DataTransformFn):
 
 @dataclasses.dataclass(frozen=True)
 class AlohaOutputs(transforms.DataTransformFn):
-    """Outputs for the Aloha policy."""
+    """Outputs for the Aloha policy.
+    
+    For dual-arm setups with per-arm padding, this extracts the valid dimensions
+    from each arm's half and concatenates them:
+    [left_7, pad_9, right_7, pad_9] → [left_7, right_7]
+    """
 
     # If true, this will convert the joint and gripper values from the standard Aloha space to
     # the space used by the pi internal runtime which was used to train the base model.
     adapt_to_pi: bool = True
+    actual_arm_dim: int = 7  # 每臂实际动作维度
+    dual_arm_padding: bool = True  # 是否使用分段 padding（双臂模式）
 
     def __call__(self, data: dict) -> dict:
-        # Only return the first 14 dims.
-        actions = np.asarray(data["actions"][:, :14])
+        actions = np.asarray(data["actions"])
+        
+        if self.dual_arm_padding:
+            half_dim = actions.shape[-1] // 2  # 16
+            
+            # 从每段取前 actual_arm_dim 维
+            left_actions = actions[:, :half_dim][..., :self.actual_arm_dim]   # [:, :16][:, :7]
+            right_actions = actions[:, half_dim:][..., :self.actual_arm_dim]  # [:, 16:][:, :7]
+            
+            # 合并为 14 维输出
+            actions = np.concatenate([left_actions, right_actions], axis=-1)
+        else:
+            # Legacy: just take first 14 dims
+            actions = actions[:, :14]
+        
         return {"actions": _encode_actions(actions, adapt_to_pi=self.adapt_to_pi)}
 
 

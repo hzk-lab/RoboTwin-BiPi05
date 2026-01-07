@@ -1,0 +1,143 @@
+_wandb:
+    value:
+        cli_version: 0.19.1
+        m: []
+        python_version: 3.11.14
+        t:
+            "1":
+                - 1
+                - 5
+                - 11
+                - 12
+                - 41
+                - 45
+                - 49
+                - 51
+                - 53
+                - 55
+            "2":
+                - 1
+                - 5
+                - 11
+                - 12
+                - 41
+                - 45
+                - 49
+                - 51
+                - 53
+                - 55
+            "3":
+                - 13
+                - 16
+                - 23
+                - 55
+                - 61
+            "4": 3.11.14
+            "5": 0.19.1
+            "6": 4.48.1
+            "8":
+                - 5
+            "12": 0.19.1
+            "13": linux-x86_64
+assets_base_dir:
+    value: ./assets
+batch_size:
+    value: 32
+checkpoint_base_dir:
+    value: /data0/users/haoce/RoboTwin/policy/pi0/checkpoints
+data:
+    value:
+        action_sequence_keys:
+            - action
+        adapt_to_pi: false
+        assets:
+            asset_id: null
+            assets_dir: null
+        base_config:
+            action_sequence_keys:
+                - actions
+            asset_id: null
+            data_transforms:
+                inputs: []
+                outputs: []
+            local_files_only: true
+            model_transforms:
+                inputs: []
+                outputs: []
+            norm_stats: null
+            prompt_from_task: true
+            repack_transforms:
+                inputs: []
+                outputs: []
+            repo_id: null
+            use_quantile_norm: false
+        default_prompt: null
+        repack_transforms:
+            inputs:
+                - structure:
+                    actions: action
+                    images:
+                        cam_high: observation.images.cam_high
+                        cam_left_wrist: observation.images.cam_left_wrist
+                        cam_right_wrist: observation.images.cam_right_wrist
+                    prompt: prompt
+                    state: observation.state
+            outputs: []
+        repo_id: shake_bottle-demo_clean-50
+        use_delta_joint_actions: true
+ema_decay:
+    value: 0.99
+exp_name:
+    value: shake_bottle-demo_clean-50_right
+freeze_filter:
+    value: All(PathRegex(pattern=re.compile('.*llm.*'), sep='/'), Not(PathRegex(pattern=re.compile('.*lora.*'), sep='/')))
+fsdp_devices:
+    value: 1
+keep_period:
+    value: 5000
+log_interval:
+    value: 100
+lr_schedule:
+    value:
+        decay_lr: 2.5e-06
+        decay_steps: 30000
+        peak_lr: 2.5e-05
+        warmup_steps: 1000
+model:
+    value:
+        action_dim: 32
+        action_expert_variant: gemma_300m_lora
+        action_horizon: 50
+        dtype: bfloat16
+        max_token_len: 48
+        paligemma_variant: gemma_2b_lora
+name:
+    value: pi0_base_aloha_robotwin_lora
+num_train_steps:
+    value: 30000
+num_workers:
+    value: 2
+optimizer:
+    value:
+        b1: 0.9
+        b2: 0.95
+        clip_gradient_norm: 1
+        eps: 1e-08
+        weight_decay: 1e-10
+overwrite:
+    value: true
+policy_metadata:
+    value: null
+project_name:
+    value: openpi
+resume:
+    value: false
+save_interval:
+    value: 5000
+seed:
+    value: 42
+wandb_enabled:
+    value: true
+weight_loader:
+    value:
+        params_path: s3://openpi-assets/checkpoints/pi0_base/params

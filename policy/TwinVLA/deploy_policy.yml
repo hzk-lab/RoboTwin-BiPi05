@@ -1,0 +1,17 @@
+# TwinVLA Deploy Policy Configuration
+# 用于 RoboTwin 双臂评估
+
+# Basic experiment configuration (keep unchanged)
+policy_name: null
+task_name: null
+task_config: null
+ckpt_setting: null
+seed: null
+instruction_type: unseen
+
+# TwinVLA Parameters
+train_config_name: pi0_base_aloha_robotwin_lora
+model_name: shake_bottle-demo_clean-50
+checkpoint_id: 20000
+pi0_step: 50
+checkpoint_dir: /data0/users/haoce/RoboTwin/policy/pi05/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50/20000

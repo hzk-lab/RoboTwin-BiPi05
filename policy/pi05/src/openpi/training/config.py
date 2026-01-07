@@ -492,7 +492,7 @@ class TrainConfig:
     # Base directory for config assets (e.g., norm stats).
     assets_base_dir: str = "./assets"
     # Base directory for checkpoints.
-    checkpoint_base_dir: str = "/data1/users/haoce/pi0_checkpoints/"
+    checkpoint_base_dir: str = "/data0/users/haoce/RoboTwin/policy/pi05/checkpoints/"
 
     # Random seed that will be used by random generators during training.
     seed: int = 42
@@ -507,7 +507,7 @@ class TrainConfig:
     # How often (in steps) to log training metrics.
     log_interval: int = 100
     # How often (in steps) to save checkpoints.
-    save_interval: int = 1000
+    save_interval: int = 10000
     # If set, any existing checkpoints matching step % keep_period == 0 will not be deleted.
     keep_period: int | None = 5000
 
@@ -560,7 +560,8 @@ _CONFIGS = [
         name="pi05_aloha_full_base",
         model=pi0_config.Pi0Config(pi05=True),
         data=LeRobotAlohaDataConfig(
-            repo_id="your_repo_id",
+            repo_id="shake_bottle-demo_clean-50",  # 只使用 shake_bottle 数据
+            adapt_to_pi=False,
             repack_transforms=_transforms.Group(inputs=[
                 _transforms.RepackTransform({
                     "images": {
@@ -574,20 +575,21 @@ _CONFIGS = [
                 })
             ]),
             base_config=DataConfig(
+                local_files_only=True,
                 prompt_from_task=True,
             ),
         ),
-        weight_loader=weight_loaders.CheckpointWeightLoader("gs://openpi-assets/checkpoints/pi05_base/params"),
+        weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi05_base/params"),
         num_train_steps=20_000,
-        batch_size=64,
-        fsdp_devices=1,  # refer line 359
+        batch_size=32,  # 4 GPUs x 8 per GPU
+        fsdp_devices=4,  # 全量微调需要 FSDP 分片
     ),
     # pi0_base by lora
     TrainConfig(
         name="pi0_base_aloha_robotwin_lora",
         model=pi0_config.Pi0Config(paligemma_variant="gemma_2b_lora", action_expert_variant="gemma_300m_lora"),
         data=LeRobotAlohaDataConfig(
-            repo_id="demo_clean_repo",  # your datasets repo_id
+            repo_id="shake_bottle-demo_clean-50",  # your datasets repo_id
             adapt_to_pi=False,
             repack_transforms=_transforms.Group(inputs=[
                 _transforms.RepackTransform({
@@ -618,7 +620,7 @@ _CONFIGS = [
         name="pi0_fast_aloha_robotwin_lora",
         model=pi0_fast.Pi0FASTConfig(paligemma_variant="gemma_2b_lora"),
         data=LeRobotAlohaDataConfig(
-            repo_id="your_repo_id",  # your datasets repo_id
+            repo_id="shake_bottle-demo_clean-50",  # 只使用 shake_bottle 数据
             adapt_to_pi=False,
             repack_transforms=_transforms.Group(inputs=[
                 _transforms.RepackTransform({
@@ -650,7 +652,7 @@ _CONFIGS = [
         name="pi0_base_aloha_robotwin_full",
         model=pi0_config.Pi0Config(),
         data=LeRobotAlohaDataConfig(
-            repo_id="your_repo_id",  # your datasets repo_id
+            repo_id="shake_bottle-demo_clean-50",  # 只使用 shake_bottle 数据
             adapt_to_pi=False,
             repack_transforms=_transforms.Group(inputs=[
                 _transforms.RepackTransform({
@@ -680,7 +682,7 @@ _CONFIGS = [
         name="pi0_fast_aloha_robotwin_full",
         model=pi0_fast.Pi0FASTConfig(),
         data=LeRobotAlohaDataConfig(
-            repo_id="your_repo_id",  # your datasets repo_id
+            repo_id="shake_bottle-demo_clean-50",  # 只使用 shake_bottle 数据
             adapt_to_pi=False,
             repack_transforms=_transforms.Group(inputs=[
                 _transforms.RepackTransform({

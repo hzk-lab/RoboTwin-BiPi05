@@ -1,0 +1,910 @@
+21:14:58.549 [I] Loaded norm stats from /data0/users/haoce/RoboTwin/policy/pi0/assets/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50 (1057842:config.py:161)
+Resolving data files: 100%|██████████████████████| 50/50 [00:00<00:00, 254200.24it/s]
+21:15:14.247 [I] Initialized data loader:
+[0].images['base_0_rgb']: (32, 224, 224, 3)@float32
+[0].images['left_wrist_0_rgb']: (32, 224, 224, 3)@float32
+[0].images['right_wrist_0_rgb']: (32, 224, 224, 3)@float32
+[0].image_masks['base_0_rgb']: (32,)@bool
+[0].image_masks['left_wrist_0_rgb']: (32,)@bool
+[0].image_masks['right_wrist_0_rgb']: (32,)@bool
+[0].state: (32, 32)@float32
+[0].tokenized_prompt: (32, 48)@int32
+[0].tokenized_prompt_mask: (32, 48)@bool
+[1]: (32, 50, 32)@float32 (1057842:train_dual_vla.py:415)
+21:15:14.820 [I] Created BasePyTreeCheckpointHandler: pytree_metadata_options=PyTreeMetadataOptions(support_rich_types=False), array_metadata_store=None (1057842:base_pytree_checkpoint_handler.py:332)
+21:15:14.837 [I] Restoring checkpoint from /data0/users/haoce/.cache/openpi/openpi-assets/checkpoints/pi0_base/params. (1057842:checkpointer.py:256)
+21:15:26.682 [I] [process=0] /jax/checkpoint/read/bytes_per_sec: 1.0 GiB/s (total bytes: 12.1 GiB) (time elapsed: 11 seconds) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+21:15:26.682 [I] Finished restoring checkpoint from /data0/users/haoce/.cache/openpi/openpi-assets/checkpoints/pi0_base/params. (1057842:checkpointer.py:259)
+21:15:26.682 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: Checkpointer:restore (1057842:multihost.py:293)
+21:15:37.955 [I] Initialized train state:
+['PaliGemma']['img']['Transformer']['encoder_norm']['bias'].value: (1152,)@float32
+['PaliGemma']['img']['Transformer']['encoder_norm']['scale'].value: (1152,)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['LayerNorm_0']['bias'].value: (27, 1152)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['LayerNorm_0']['scale'].value: (27, 1152)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['LayerNorm_1']['bias'].value: (27, 1152)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['LayerNorm_1']['scale'].value: (27, 1152)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MlpBlock_0']['Dense_0']['bias'].value: (27, 4304)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MlpBlock_0']['Dense_0']['kernel'].value: (27, 1152, 4304)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MlpBlock_0']['Dense_1']['bias'].value: (27, 1152)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MlpBlock_0']['Dense_1']['kernel'].value: (27, 4304, 1152)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MultiHeadDotProductAttention_0']['key']['bias'].value: (27, 16, 72)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MultiHeadDotProductAttention_0']['key']['kernel'].value: (27, 1152, 16, 72)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MultiHeadDotProductAttention_0']['out']['bias'].value: (27, 1152)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MultiHeadDotProductAttention_0']['out']['kernel'].value: (27, 16, 72, 1152)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MultiHeadDotProductAttention_0']['query']['bias'].value: (27, 16, 72)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MultiHeadDotProductAttention_0']['query']['kernel'].value: (27, 1152, 16, 72)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MultiHeadDotProductAttention_0']['value']['bias'].value: (27, 16, 72)@float32
+['PaliGemma']['img']['Transformer']['encoderblock']['MultiHeadDotProductAttention_0']['value']['kernel'].value: (27, 1152, 16, 72)@float32
+['PaliGemma']['img']['embedding']['bias'].value: (1152,)@float32
+['PaliGemma']['img']['embedding']['kernel'].value: (14, 14, 3, 1152)@float32
+['PaliGemma']['img']['head']['bias'].value: (2048,)@float32
+['PaliGemma']['img']['head']['kernel'].value: (1152, 2048)@float32
+['PaliGemma']['img']['pos_embedding'].value: (1, 256, 1152)@float32
+['PaliGemma']['llm']['embedder']['input_embedding'].value: (257152, 2048)@bfloat16
+['PaliGemma']['llm']['final_norm']['scale'].value: (2048,)@bfloat16
+['PaliGemma']['llm']['final_norm_1']['scale'].value: (1024,)@bfloat16
+['PaliGemma']['llm']['layers']['attn']['attn_vec_einsum']['lora_a'].value: (18, 8, 256, 16)@float32
+['PaliGemma']['llm']['layers']['attn']['attn_vec_einsum']['lora_b'].value: (18, 8, 16, 2048)@float32
+['PaliGemma']['llm']['layers']['attn']['attn_vec_einsum']['w'].value: (18, 8, 256, 2048)@bfloat16
+['PaliGemma']['llm']['layers']['attn']['attn_vec_einsum_1']['lora_a'].value: (18, 8, 256, 32)@float32
+['PaliGemma']['llm']['layers']['attn']['attn_vec_einsum_1']['lora_b'].value: (18, 8, 32, 1024)@float32
+['PaliGemma']['llm']['layers']['attn']['attn_vec_einsum_1']['w'].value: (18, 8, 256, 1024)@bfloat16
+['PaliGemma']['llm']['layers']['attn']['kv_einsum']['lora_a'].value: (18, 2, 1, 2048, 16)@float32
+['PaliGemma']['llm']['layers']['attn']['kv_einsum']['lora_b'].value: (18, 2, 1, 16, 256)@float32
+['PaliGemma']['llm']['layers']['attn']['kv_einsum']['w'].value: (18, 2, 1, 2048, 256)@bfloat16
+['PaliGemma']['llm']['layers']['attn']['kv_einsum_1']['lora_a'].value: (18, 2, 1, 1024, 32)@float32
+['PaliGemma']['llm']['layers']['attn']['kv_einsum_1']['lora_b'].value: (18, 2, 1, 32, 256)@float32
+['PaliGemma']['llm']['layers']['attn']['kv_einsum_1']['w'].value: (18, 2, 1, 1024, 256)@bfloat16
+['PaliGemma']['llm']['layers']['attn']['q_einsum']['lora_a'].value: (18, 8, 2048, 16)@float32
+['PaliGemma']['llm']['layers']['attn']['q_einsum']['lora_b'].value: (18, 8, 16, 256)@float32
+['PaliGemma']['llm']['layers']['attn']['q_einsum']['w'].value: (18, 8, 2048, 256)@bfloat16
+['PaliGemma']['llm']['layers']['attn']['q_einsum_1']['lora_a'].value: (18, 8, 1024, 32)@float32
+['PaliGemma']['llm']['layers']['attn']['q_einsum_1']['lora_b'].value: (18, 8, 32, 256)@float32
+['PaliGemma']['llm']['layers']['attn']['q_einsum_1']['w'].value: (18, 8, 1024, 256)@bfloat16
+['PaliGemma']['llm']['layers']['mlp']['gating_einsum'].value: (18, 2, 2048, 16384)@bfloat16
+['PaliGemma']['llm']['layers']['mlp']['gating_einsum_lora_a'].value: (18, 2, 2048, 16)@float32
+['PaliGemma']['llm']['layers']['mlp']['gating_einsum_lora_b'].value: (18, 2, 16, 16384)@float32
+['PaliGemma']['llm']['layers']['mlp']['linear'].value: (18, 16384, 2048)@bfloat16
+['PaliGemma']['llm']['layers']['mlp']['linear_lora_a'].value: (18, 16384, 16)@float32
+['PaliGemma']['llm']['layers']['mlp']['linear_lora_b'].value: (18, 16, 2048)@float32
+['PaliGemma']['llm']['layers']['mlp_1']['gating_einsum'].value: (18, 2, 1024, 4096)@bfloat16
+['PaliGemma']['llm']['layers']['mlp_1']['gating_einsum_lora_a'].value: (18, 2, 1024, 32)@float32
+['PaliGemma']['llm']['layers']['mlp_1']['gating_einsum_lora_b'].value: (18, 2, 32, 4096)@float32
+['PaliGemma']['llm']['layers']['mlp_1']['linear'].value: (18, 4096, 1024)@bfloat16
+['PaliGemma']['llm']['layers']['mlp_1']['linear_lora_a'].value: (18, 4096, 32)@float32
+['PaliGemma']['llm']['layers']['mlp_1']['linear_lora_b'].value: (18, 32, 1024)@float32
+['PaliGemma']['llm']['layers']['pre_attention_norm']['scale'].value: (18, 2048)@bfloat16
+['PaliGemma']['llm']['layers']['pre_attention_norm_1']['scale'].value: (18, 1024)@bfloat16
+['PaliGemma']['llm']['layers']['pre_ffw_norm']['scale'].value: (18, 2048)@bfloat16
+['PaliGemma']['llm']['layers']['pre_ffw_norm_1']['scale'].value: (18, 1024)@bfloat16
+['action_in_proj']['bias'].value: (1024,)@float32
+['action_in_proj']['kernel'].value: (32, 1024)@float32
+['action_out_proj']['bias'].value: (32,)@float32
+['action_out_proj']['kernel'].value: (1024, 32)@float32
+['action_time_mlp_in']['bias'].value: (1024,)@float32
+['action_time_mlp_in']['kernel'].value: (2048, 1024)@float32
+['action_time_mlp_out']['bias'].value: (1024,)@float32
+['action_time_mlp_out']['kernel'].value: (1024, 1024)@float32
+['state_proj']['bias'].value: (1024,)@float32
+['state_proj']['kernel'].value: (32, 1024)@float32 (1057842:train_dual_vla.py:419)
+                                                                                           
+Step 0: grad_norm=3.8039, loss=0.5531, param_norm=1379.6764
+Step 100: grad_norm=4.1332, loss=0.4494, param_norm=1379.6764
+Step 200: grad_norm=2.3876, loss=0.2441, param_norm=1379.6766
+Step 300: grad_norm=2.1517, loss=0.1664, param_norm=1379.6774
+Step 400: grad_norm=1.6731, loss=0.1208, param_norm=1379.6785
+Step 500: grad_norm=1.3247, loss=0.1079, param_norm=1379.6799
+Step 600: grad_norm=1.3245, loss=0.1007, param_norm=1379.6819
+Step 700: grad_norm=1.0396, loss=0.0874, param_norm=1379.6849
+Step 800: grad_norm=1.0103, loss=0.0851, param_norm=1379.6893
+Step 900: grad_norm=0.8873, loss=0.0790, param_norm=1379.6947
+Step 1000: grad_norm=0.9038, loss=0.0744, param_norm=1379.7006
+Step 1100: grad_norm=0.8964, loss=0.0733, param_norm=1379.7087
+Step 1200: grad_norm=0.8313, loss=0.0653, param_norm=1379.7166
+Step 1300: grad_norm=0.7406, loss=0.0572, param_norm=1379.7240
+Step 1400: grad_norm=0.7586, loss=0.0570, param_norm=1379.7322
+Step 1500: grad_norm=0.7970, loss=0.0596, param_norm=1379.7406
+Step 1600: grad_norm=0.6853, loss=0.0555, param_norm=1379.7483
+Step 1700: grad_norm=0.6988, loss=0.0520, param_norm=1379.7566
+Step 1800: grad_norm=0.6858, loss=0.0512, param_norm=1379.7648
+Step 1900: grad_norm=0.6606, loss=0.0483, param_norm=1379.7728
+Step 2000: grad_norm=0.6358, loss=0.0496, param_norm=1379.7800
+Step 2100: grad_norm=0.6206, loss=0.0447, param_norm=1379.7875
+Step 2200: grad_norm=0.6232, loss=0.0462, param_norm=1379.7953
+Step 2300: grad_norm=0.6168, loss=0.0434, param_norm=1379.8035
+Step 2400: grad_norm=0.5865, loss=0.0404, param_norm=1379.8105
+Step 2500: grad_norm=0.6085, loss=0.0401, param_norm=1379.8184
+Step 2600: grad_norm=0.5999, loss=0.0410, param_norm=1379.8262
+Step 2700: grad_norm=0.6148, loss=0.0383, param_norm=1379.8333
+Step 2800: grad_norm=0.5433, loss=0.0396, param_norm=1379.8412
+Step 2900: grad_norm=0.5944, loss=0.0425, param_norm=1379.8490
+Step 3000: grad_norm=0.5567, loss=0.0390, param_norm=1379.8567
+Step 3100: grad_norm=0.5749, loss=0.0369, param_norm=1379.8639
+Step 3200: grad_norm=0.5846, loss=0.0395, param_norm=1379.8711
+Step 3300: grad_norm=0.5548, loss=0.0380, param_norm=1379.8794
+Step 3400: grad_norm=0.5310, loss=0.0351, param_norm=1379.8872
+Step 3500: grad_norm=0.6151, loss=0.0388, param_norm=1379.8943
+Step 3600: grad_norm=0.5537, loss=0.0388, param_norm=1379.9021
+Step 3700: grad_norm=0.5571, loss=0.0371, param_norm=1379.9098
+Step 3800: grad_norm=0.5221, loss=0.0348, param_norm=1379.9169
+Step 3900: grad_norm=0.5087, loss=0.0373, param_norm=1379.9242
+Step 4000: grad_norm=0.5294, loss=0.0346, param_norm=1379.9316
+Step 4100: grad_norm=0.5476, loss=0.0342, param_norm=1379.9393
+Step 4200: grad_norm=0.5473, loss=0.0329, param_norm=1379.9462
+Step 4300: grad_norm=0.5406, loss=0.0358, param_norm=1379.9534
+Step 4400: grad_norm=0.5156, loss=0.0338, param_norm=1379.9609
+Step 4500: grad_norm=0.5153, loss=0.0338, param_norm=1379.9679
+Step 4600: grad_norm=0.5011, loss=0.0320, param_norm=1379.9753
+Step 4700: grad_norm=0.5227, loss=0.0316, param_norm=1379.9824
+Step 4800: grad_norm=0.4939, loss=0.0325, param_norm=1379.9890
+Step 4900: grad_norm=0.5247, loss=0.0334, param_norm=1379.9958
+Step 5000: grad_norm=0.4886, loss=0.0309, param_norm=1380.0028
+22:30:26.561 [I] [process=0][thread=MainThread][wait_until_finished] No Save Finalize thread to wait for. Returning. (1057842:checkpoint_manager.py:1767)
+22:30:26.562 [I] [process=0] Saving checkpoint at step 5000                                       (1057842:checkpoint_manager.py:1286)
+22:30:26.562 [I] [process=0] Started async saving checkpoint to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000. (1057842:async_checkpointer.py:358)
+22:30:26.563 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+22:30:26.563 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0 (1057842:atomicity.py:144)
+22:30:26.564 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+22:30:26.564 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+22:30:26.564 [I] Wrote Metadata={'item_handlers': None, 'metrics': {}, 'performance_metrics': {}, 'init_timestamp_nsecs': 1767364226563737604, 'commit_timestamp_nsecs': None, 'custom': {}}, json={"item_handlers": null, "metrics": {}, "performance_metrics": {}, "init_timestamp_nsecs": 1767364226563737604, "commit_timestamp_nsecs": null, "custom": {}} to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/_CHECKPOINT_METADATA (1057842:checkpoint.py:185)
+22:30:26.564 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/assets.orbax-checkpoint-tmp-1 (1057842:atomicity.py:144)
+22:30:26.565 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/params.orbax-checkpoint-tmp-2 (1057842:atomicity.py:144)
+22:30:26.565 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/train_state.orbax-checkpoint-tmp-3 (1057842:atomicity.py:144)
+22:30:26.565 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+22:30:26.596 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+22:30:29.064 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+22:30:29.066 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+22:34:08.617 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 32.3 MiB/s (total bytes: 7.0 GiB) (time elapsed: 3 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+22:34:08.620 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+22:34:08.621 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 48.3 MiB/s (total bytes: 10.5 GiB) (time elapsed: 3 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+22:34:08.752 [I] [process=0][thread=async_save] Background save thread started.                   (1057842:async_checkpointer.py:121)
+22:34:08.758 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: CheckpointManager:old_steps_to_remove (1057842:multihost.py:293)
+22:34:08.759 [I] [process=0][thread=MainThread][step=5000] Starting CheckpointManager Save Finalize thread=save_finalize (1057842:checkpoint_manager.py:1328)
+22:34:08.760 [I] [process=0][thread=save_finalize] Waiting for background save thread=async_save. (1057842:async_checkpointer.py:231)
+22:34:08.760 [I] {'step': 5000, 'event_type': 'save', 'directory': '/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right', 'reached_preemption': False, 'preemption_received_at': None, 'synchronous': False, 'wait_for_prev_start_time': 1767364226.5617354, 'wait_for_prev_duration_secs': 0.0002830028533935547, 'checkpointer_blocking_start_time': 1767364226.5623183, 'checkpointer_blocking_duration_secs': 222.19605660438538, 'get_old_steps_start_time': 1767364448.7584434, 'get_old_steps_duration_secs': 9.298324584960938e-06, 'checkpoint_manager_blocking_start_time': 1767364226.5616772, 'checkpoint_manager_blocking_duration_secs': 222.1991994380951} (1057842:standard_logger.py:34)
+ 17%|███████▏                                   | 5004/30000 [1:18:32<164:46:32, 23.73s/it]22:34:10.880 [I] ChainedFuture completed 1/1 futures in 2.12 seconds.                             (1057842:future.py:137)
+22:34:10.880 [I] [process=0] /jax/checkpoint/write/bytes_per_sec: 31.9 MiB/s (total bytes: 7.0 GiB) (time elapsed: 3 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+ 17%|███████▎                                    | 5010/30000 [1:18:38<24:48:36,  3.57s/it]22:34:16.298 [I] ChainedFuture completed 1/1 futures in 5.42 seconds.                             (1057842:future.py:137)
+22:34:16.298 [I] [process=0] /jax/checkpoint/write/bytes_per_sec: 46.7 MiB/s (total bytes: 10.5 GiB) (time elapsed: 3 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+22:34:16.298 [I] [process=0][thread=async_save] 3 Handler Commit operations completed.            (1057842:async_checkpointer.py:131)
+22:34:16.299 [I] Read Metadata={'item_handlers': None, 'metrics': {}, 'performance_metrics': {}, 'init_timestamp_nsecs': 1767364226563737604, 'commit_timestamp_nsecs': None, 'custom': {}} from /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/_CHECKPOINT_METADATA (1057842:checkpoint.py:225)
+22:34:16.299 [I] [process=0][thread=async_save] Async Save Callback [1/3]: Finalizing Handler: <orbax.checkpoint._src.handlers.composite_checkpoint_handler.CompositeCheckpointHandler object at 0x7f037de0c5d0> on /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0 (1057842:async_checkpointer.py:406)
+22:34:16.300 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/assets.orbax-checkpoint-tmp-1 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/assets (1057842:atomicity.py:287)
+22:34:16.300 [I] Updated Metadata={'item_handlers': {'assets': 'openpi.training.checkpoints.CallbackHandler', 'params': 'orbax.checkpoint._src.handlers.pytree_checkpoint_handler.PyTreeCheckpointHandler', 'train_state': 'orbax.checkpoint._src.handlers.pytree_checkpoint_handler.PyTreeCheckpointHandler'}, 'metrics': {}, 'performance_metrics': {}, 'init_timestamp_nsecs': 1767364226563737604, 'commit_timestamp_nsecs': None, 'custom': {}} to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/_CHECKPOINT_METADATA (1057842:checkpoint.py:244)
+22:34:16.307 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/train_state.orbax-checkpoint-tmp-3 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/train_state (1057842:atomicity.py:287)
+22:34:16.313 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/params.orbax-checkpoint-tmp-2 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0/params (1057842:atomicity.py:287)
+22:34:16.313 [I] [process=0][thread=async_save] Async Save Callback [2/3]: Running post_finalization_callback: None on /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000 (1057842:async_checkpointer.py:416)
+22:34:16.313 [I] [process=0][thread=async_save] Async Save Callback [3/3]: Finalizing checkpoint directory: /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0 (1057842:async_checkpointer.py:426)
+22:34:16.313 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000.orbax-checkpoint-tmp-0 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000 (1057842:atomicity.py:287)
+22:34:16.314 [I] [process=0][thread=async_save] Finished saving checkpoint (finalized tmp dir) to `/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/5000`. (1057842:atomicity.py:548)
+22:34:16.314 [I] [process=0][thread=async_save] Background save thread done.                      (1057842:async_checkpointer.py:183)
+22:34:16.314 [I] [process=0][thread=save_finalize] Done with waiting for background save thread=async_save. (1057842:async_checkpointer.py:239)
+22:34:16.314 [I] [process=0][thread=save_finalize] No errors found in background save thread=async_save. (1057842:async_checkpointer.py:249)
+22:34:16.314 [I] [process=0][thread=save_finalize][step=5000] CheckpointManager Save Finalize is syncing with other hosts... (1057842:checkpoint_manager.py:1890)
+22:34:16.314 [I] [process=0][thread=save_finalize][step=5000] CheckpointManager Save Finalize is done on all hosts. (1057842:checkpoint_manager.py:1905)
+                                                                                           
+Step 5100: grad_norm=0.4988, loss=0.0315, param_norm=1380.0098
+Step 5200: grad_norm=0.5233, loss=0.0311, param_norm=1380.0167
+Step 5300: grad_norm=0.5440, loss=0.0299, param_norm=1380.0237
+Step 5400: grad_norm=0.4732, loss=0.0288, param_norm=1380.0300
+Step 5500: grad_norm=0.5116, loss=0.0312, param_norm=1380.0365
+Step 5600: grad_norm=0.4943, loss=0.0308, param_norm=1380.0432
+Step 5700: grad_norm=0.4901, loss=0.0283, param_norm=1380.0493
+Step 5800: grad_norm=0.4922, loss=0.0331, param_norm=1380.0549
+Step 5900: grad_norm=0.5024, loss=0.0294, param_norm=1380.0616
+Step 6000: grad_norm=0.4688, loss=0.0266, param_norm=1380.0681
+Step 6100: grad_norm=0.4875, loss=0.0308, param_norm=1380.0759
+Step 6200: grad_norm=0.5123, loss=0.0296, param_norm=1380.0818
+Step 6300: grad_norm=0.4719, loss=0.0289, param_norm=1380.0879
+Step 6400: grad_norm=0.4992, loss=0.0274, param_norm=1380.0940
+Step 6500: grad_norm=0.4834, loss=0.0264, param_norm=1380.1006
+Step 6600: grad_norm=0.4460, loss=0.0251, param_norm=1380.1066
+Step 6700: grad_norm=0.4628, loss=0.0281, param_norm=1380.1133
+Step 6800: grad_norm=0.5199, loss=0.0302, param_norm=1380.1191
+Step 6900: grad_norm=0.4588, loss=0.0288, param_norm=1380.1252
+Step 7000: grad_norm=0.4971, loss=0.0289, param_norm=1380.1316
+Step 7100: grad_norm=0.4722, loss=0.0266, param_norm=1380.1373
+Step 7200: grad_norm=0.4694, loss=0.0279, param_norm=1380.1426
+Step 7300: grad_norm=0.4757, loss=0.0278, param_norm=1380.1486
+Step 7400: grad_norm=0.4535, loss=0.0252, param_norm=1380.1545
+Step 7500: grad_norm=0.4903, loss=0.0301, param_norm=1380.1604
+Step 7600: grad_norm=0.4962, loss=0.0285, param_norm=1380.1677
+Step 7700: grad_norm=0.4765, loss=0.0283, param_norm=1380.1743
+Step 7800: grad_norm=0.4673, loss=0.0275, param_norm=1380.1799
+Step 7900: grad_norm=0.4442, loss=0.0250, param_norm=1380.1860
+Step 8000: grad_norm=0.4557, loss=0.0239, param_norm=1380.1921
+Step 8100: grad_norm=0.4801, loss=0.0271, param_norm=1380.1984
+Step 8200: grad_norm=0.4664, loss=0.0241, param_norm=1380.2042
+Step 8300: grad_norm=0.4732, loss=0.0250, param_norm=1380.2095
+Step 8400: grad_norm=0.4533, loss=0.0259, param_norm=1380.2155
+Step 8500: grad_norm=0.4605, loss=0.0242, param_norm=1380.2212
+Step 8600: grad_norm=0.4745, loss=0.0252, param_norm=1380.2266
+Step 8700: grad_norm=0.4434, loss=0.0272, param_norm=1380.2323
+Step 8800: grad_norm=0.4762, loss=0.0242, param_norm=1380.2374
+Step 8900: grad_norm=0.4653, loss=0.0253, param_norm=1380.2424
+Step 9000: grad_norm=0.4632, loss=0.0229, param_norm=1380.2480
+Step 9100: grad_norm=0.4718, loss=0.0244, param_norm=1380.2531
+Step 9200: grad_norm=0.4379, loss=0.0248, param_norm=1380.2578
+Step 9300: grad_norm=0.4481, loss=0.0231, param_norm=1380.2634
+Step 9400: grad_norm=0.4254, loss=0.0226, param_norm=1380.2690
+Step 9500: grad_norm=0.4311, loss=0.0241, param_norm=1380.2740
+Step 9600: grad_norm=0.4726, loss=0.0236, param_norm=1380.2792
+Step 9700: grad_norm=0.4231, loss=0.0232, param_norm=1380.2836
+Step 9800: grad_norm=0.4568, loss=0.0232, param_norm=1380.2878
+Step 9900: grad_norm=0.4291, loss=0.0224, param_norm=1380.2930
+Step 10000: grad_norm=0.4191, loss=0.0222, param_norm=1380.2981
+23:48:13.727 [I] [process=0][thread=MainThread][step=5000][wait_until_finished] Waiting for Save Finalize thread (save_finalize) to complete. (1057842:checkpoint_manager.py:1777)
+23:48:13.727 [I] [process=0][thread=MainThread][step=5000][wait_until_finished] Done waiting for Save Finalize thread (save_finalize) running at step=5000. (1057842:checkpoint_manager.py:1786)
+23:48:13.727 [I] [process=0][thread=MainThread][step=5000][wait_until_finished] Resetting Save Finalize thread (save_finalize) running at step=5000, also errors if any. (1057842:checkpoint_manager.py:1817)
+23:48:13.728 [I] [process=0] Saving checkpoint at step 10000                                      (1057842:checkpoint_manager.py:1286)
+23:48:13.728 [I] [process=0] Started async saving checkpoint to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000. (1057842:async_checkpointer.py:358)
+23:48:13.728 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+23:48:13.729 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4 (1057842:atomicity.py:144)
+23:48:13.729 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+23:48:13.729 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+23:48:13.730 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4/assets.orbax-checkpoint-tmp-5 (1057842:atomicity.py:144)
+23:48:13.730 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4/params.orbax-checkpoint-tmp-6 (1057842:atomicity.py:144)
+23:48:13.730 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4/train_state.orbax-checkpoint-tmp-7 (1057842:atomicity.py:144)
+23:48:13.730 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+23:48:13.755 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+23:48:16.193 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+23:48:16.199 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+23:48:19.982 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 1.1 GiB/s (total bytes: 7.0 GiB) (time elapsed: 6 seconds) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+23:48:19.983 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+23:48:19.984 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 1.7 GiB/s (total bytes: 10.5 GiB) (time elapsed: 6 seconds) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+23:48:20.007 [I] [process=0][thread=async_save] Background save thread started.                   (1057842:async_checkpointer.py:121)
+23:48:20.012 [I] Preserving Checkpoint[step=5000 | time=2026-01-02 14:34:08.758401+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+23:48:20.013 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: CheckpointManager:old_steps_to_remove (1057842:multihost.py:293)
+23:48:20.014 [I] [process=0][thread=MainThread][step=10000] Starting CheckpointManager Save Finalize thread=save_finalize (1057842:checkpoint_manager.py:1328)
+23:48:20.014 [I] [process=0][thread=save_finalize] Waiting for background save thread=async_save. (1057842:async_checkpointer.py:231)
+23:48:20.014 [I] {'step': 10000, 'event_type': 'save', 'directory': '/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right', 'reached_preemption': False, 'preemption_received_at': None, 'synchronous': False, 'wait_for_prev_start_time': 1767368893.7273695, 'wait_for_prev_duration_secs': 0.00042891502380371094, 'checkpointer_blocking_start_time': 1767368893.7280934, 'checkpointer_blocking_duration_secs': 6.28407096862793, 'get_old_steps_start_time': 1767368900.0121865, 'get_old_steps_duration_secs': 0.0012145042419433594, 'checkpoint_manager_blocking_start_time': 1767368893.7273214, 'checkpoint_manager_blocking_duration_secs': 6.287534475326538} (1057842:standard_logger.py:34)
+ 33%|██████████████▋                             | 10004/30000 [2:32:43<8:21:13,  1.50s/it]23:48:22.187 [I] ChainedFuture completed 1/1 futures in 2.18 seconds.                             (1057842:future.py:137)
+23:48:22.187 [I] [process=0] /jax/checkpoint/write/bytes_per_sec: 847.1 MiB/s (total bytes: 7.0 GiB) (time elapsed: 8 seconds) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+ 33%|██████████████▋                             | 10007/30000 [2:32:46<6:05:31,  1.10s/it]23:48:24.829 [I] ChainedFuture completed 1/1 futures in 2.64 seconds.                             (1057842:future.py:137)
+23:48:24.829 [I] [process=0] /jax/checkpoint/write/bytes_per_sec: 967.8 MiB/s (total bytes: 10.5 GiB) (time elapsed: 11 seconds) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+23:48:24.829 [I] [process=0][thread=async_save] 3 Handler Commit operations completed.            (1057842:async_checkpointer.py:131)
+23:48:24.830 [I] [process=0][thread=async_save] Async Save Callback [1/3]: Finalizing Handler: <orbax.checkpoint._src.handlers.composite_checkpoint_handler.CompositeCheckpointHandler object at 0x7f037de0c5d0> on /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4 (1057842:async_checkpointer.py:406)
+23:48:24.830 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4/assets.orbax-checkpoint-tmp-5 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4/assets (1057842:atomicity.py:287)
+23:48:24.836 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4/train_state.orbax-checkpoint-tmp-7 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4/train_state (1057842:atomicity.py:287)
+23:48:24.841 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4/params.orbax-checkpoint-tmp-6 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4/params (1057842:atomicity.py:287)
+23:48:24.841 [I] [process=0][thread=async_save] Async Save Callback [2/3]: Running post_finalization_callback: None on /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000 (1057842:async_checkpointer.py:416)
+23:48:24.841 [I] [process=0][thread=async_save] Async Save Callback [3/3]: Finalizing checkpoint directory: /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4 (1057842:async_checkpointer.py:426)
+23:48:24.841 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000.orbax-checkpoint-tmp-4 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000 (1057842:atomicity.py:287)
+23:48:24.842 [I] [process=0][thread=async_save] Finished saving checkpoint (finalized tmp dir) to `/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/10000`. (1057842:atomicity.py:548)
+23:48:24.842 [I] [process=0][thread=async_save] Background save thread done.                      (1057842:async_checkpointer.py:183)
+23:48:24.842 [I] [process=0][thread=save_finalize] Done with waiting for background save thread=async_save. (1057842:async_checkpointer.py:239)
+23:48:24.842 [I] [process=0][thread=save_finalize] No errors found in background save thread=async_save. (1057842:async_checkpointer.py:249)
+23:48:24.842 [I] [process=0][thread=save_finalize][step=10000] CheckpointManager Save Finalize is syncing with other hosts... (1057842:checkpoint_manager.py:1890)
+23:48:24.842 [I] [process=0][thread=save_finalize][step=10000] CheckpointManager Save Finalize is done on all hosts. (1057842:checkpoint_manager.py:1905)
+                                                                                           
+Step 10100: grad_norm=0.4531, loss=0.0219, param_norm=1380.3026
+Step 10200: grad_norm=0.4121, loss=0.0223, param_norm=1380.3069
+Step 10300: grad_norm=0.4450, loss=0.0229, param_norm=1380.3123
+Step 10400: grad_norm=0.4299, loss=0.0211, param_norm=1380.3162
+Step 10500: grad_norm=0.4426, loss=0.0212, param_norm=1380.3206
+Step 10600: grad_norm=0.4425, loss=0.0218, param_norm=1380.3250
+Step 10700: grad_norm=0.4375, loss=0.0226, param_norm=1380.3295
+Step 10800: grad_norm=0.4208, loss=0.0207, param_norm=1380.3334
+Step 10900: grad_norm=0.4051, loss=0.0189, param_norm=1380.3384
+Step 11000: grad_norm=0.4085, loss=0.0197, param_norm=1380.3431
+Step 11100: grad_norm=0.4335, loss=0.0206, param_norm=1380.3478
+Step 11200: grad_norm=0.4762, loss=0.0218, param_norm=1380.3528
+Step 11300: grad_norm=0.4147, loss=0.0209, param_norm=1380.3572
+Step 11400: grad_norm=0.4315, loss=0.0202, param_norm=1380.3605
+Step 11500: grad_norm=0.4598, loss=0.0209, param_norm=1380.3650
+Step 11600: grad_norm=0.4526, loss=0.0210, param_norm=1380.3694
+Step 11700: grad_norm=0.4140, loss=0.0210, param_norm=1380.3730
+Step 11800: grad_norm=0.4255, loss=0.0216, param_norm=1380.3778
+Step 11900: grad_norm=0.4113, loss=0.0203, param_norm=1380.3822
+Step 12000: grad_norm=0.4396, loss=0.0211, param_norm=1380.3862
+Step 12100: grad_norm=0.4002, loss=0.0196, param_norm=1380.3900
+Step 12200: grad_norm=0.4322, loss=0.0185, param_norm=1380.3937
+Step 12300: grad_norm=0.3996, loss=0.0171, param_norm=1380.3975
+Step 12400: grad_norm=0.4176, loss=0.0199, param_norm=1380.4012
+Step 12500: grad_norm=0.3937, loss=0.0173, param_norm=1380.4050
+Step 12600: grad_norm=0.4544, loss=0.0204, param_norm=1380.4091
+Step 12700: grad_norm=0.4317, loss=0.0218, param_norm=1380.4125
+Step 12800: grad_norm=0.4322, loss=0.0201, param_norm=1380.4169
+Step 12900: grad_norm=0.4380, loss=0.0195, param_norm=1380.4197
+Step 13000: grad_norm=0.3966, loss=0.0210, param_norm=1380.4231
+Step 13100: grad_norm=0.4077, loss=0.0187, param_norm=1380.4255
+Step 13200: grad_norm=0.4076, loss=0.0184, param_norm=1380.4293
+Step 13300: grad_norm=0.4021, loss=0.0195, param_norm=1380.4325
+Step 13400: grad_norm=0.4263, loss=0.0186, param_norm=1380.4354
+Step 13500: grad_norm=0.4183, loss=0.0184, param_norm=1380.4381
+Step 13600: grad_norm=0.4624, loss=0.0199, param_norm=1380.4412
+Step 13700: grad_norm=0.3763, loss=0.0162, param_norm=1380.4447
+Step 13800: grad_norm=0.4183, loss=0.0179, param_norm=1380.4481
+Step 13900: grad_norm=0.4390, loss=0.0191, param_norm=1380.4520
+Step 14000: grad_norm=0.4173, loss=0.0196, param_norm=1380.4550
+Step 14100: grad_norm=0.3721, loss=0.0162, param_norm=1380.4581
+Step 14200: grad_norm=0.3912, loss=0.0169, param_norm=1380.4611
+Step 14300: grad_norm=0.4277, loss=0.0189, param_norm=1380.4646
+Step 14400: grad_norm=0.3898, loss=0.0190, param_norm=1380.4675
+Step 14500: grad_norm=0.4263, loss=0.0178, param_norm=1380.4703
+Step 14600: grad_norm=0.3971, loss=0.0178, param_norm=1380.4731
+Step 14700: grad_norm=0.4059, loss=0.0175, param_norm=1380.4756
+Step 14800: grad_norm=0.4079, loss=0.0184, param_norm=1380.4781
+Step 14900: grad_norm=0.4221, loss=0.0173, param_norm=1380.4810
+Step 15000: grad_norm=0.3820, loss=0.0173, param_norm=1380.4840
+01:02:25.772 [I] [process=0][thread=MainThread][step=10000][wait_until_finished] Waiting for Save Finalize thread (save_finalize) to complete. (1057842:checkpoint_manager.py:1777)
+01:02:25.772 [I] [process=0][thread=MainThread][step=10000][wait_until_finished] Done waiting for Save Finalize thread (save_finalize) running at step=10000. (1057842:checkpoint_manager.py:1786)
+01:02:25.772 [I] [process=0][thread=MainThread][step=10000][wait_until_finished] Resetting Save Finalize thread (save_finalize) running at step=10000, also errors if any. (1057842:checkpoint_manager.py:1817)
+01:02:25.772 [I] [process=0] Saving checkpoint at step 15000                                      (1057842:checkpoint_manager.py:1286)
+01:02:25.773 [I] [process=0] Started async saving checkpoint to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000. (1057842:async_checkpointer.py:358)
+01:02:25.773 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+01:02:25.774 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8 (1057842:atomicity.py:144)
+01:02:25.774 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+01:02:25.774 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+01:02:25.775 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8/assets.orbax-checkpoint-tmp-9 (1057842:atomicity.py:144)
+01:02:25.775 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8/params.orbax-checkpoint-tmp-10 (1057842:atomicity.py:144)
+01:02:25.775 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8/train_state.orbax-checkpoint-tmp-11 (1057842:atomicity.py:144)
+01:02:25.776 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+01:02:26.171 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+01:06:08.656 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+01:06:08.658 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+01:08:53.591 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 18.5 MiB/s (total bytes: 7.0 GiB) (time elapsed: 6 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+01:08:53.595 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+01:08:53.597 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 27.7 MiB/s (total bytes: 10.5 GiB) (time elapsed: 6 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+01:08:53.624 [I] [process=0][thread=async_save] Background save thread started.                   (1057842:async_checkpointer.py:121)
+01:08:53.653 [I] Preserving Checkpoint[step=5000 | time=2026-01-02 14:34:08.758401+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+01:08:53.654 [I] Preserving Checkpoint[step=10000 | time=2026-01-02 15:48:20.012173+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+01:08:53.655 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: CheckpointManager:old_steps_to_remove (1057842:multihost.py:293)
+01:08:53.656 [I] [process=0][thread=MainThread][step=15000] Starting CheckpointManager Save Finalize thread=save_finalize (1057842:checkpoint_manager.py:1328)
+01:08:53.657 [I] [process=0][thread=save_finalize] Waiting for background save thread=async_save. (1057842:async_checkpointer.py:231)
+01:08:53.657 [I] ChainedFuture completed 1/1 futures in 0.02 seconds.                             (1057842:future.py:137)
+01:08:53.657 [I] {'step': 15000, 'event_type': 'save', 'directory': '/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right', 'reached_preemption': False, 'preemption_received_at': None, 'synchronous': False, 'wait_for_prev_start_time': 1767373345.7718716, 'wait_for_prev_duration_secs': 0.0005545616149902344, 'checkpointer_blocking_start_time': 1767373345.7728543, 'checkpointer_blocking_duration_secs': 387.8806231021881, 'get_old_steps_start_time': 1767373733.653498, 'get_old_steps_duration_secs': 0.001886129379272461, 'checkpoint_manager_blocking_start_time': 1767373345.7717268, 'checkpoint_manager_blocking_duration_secs': 387.8858358860016} (1057842:standard_logger.py:34)
+ 50%|████████████████████▌                    | 15001/30000 [3:53:15<489:33:29, 117.50s/it]01:08:53.658 [I] [process=0] /jax/checkpoint/write/bytes_per_sec: 18.5 MiB/s (total bytes: 7.0 GiB) (time elapsed: 6 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+ 50%|█████████████████████▌                     | 15008/30000 [3:53:21<43:32:47, 10.46s/it]01:08:59.291 [I] ChainedFuture completed 1/1 futures in 5.61 seconds.                             (1057842:future.py:137)
+01:08:59.291 [I] [process=0] /jax/checkpoint/write/bytes_per_sec: 27.3 MiB/s (total bytes: 10.5 GiB) (time elapsed: 6 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+01:08:59.292 [I] [process=0][thread=async_save] 3 Handler Commit operations completed.            (1057842:async_checkpointer.py:131)
+01:08:59.292 [I] [process=0][thread=async_save] Async Save Callback [1/3]: Finalizing Handler: <orbax.checkpoint._src.handlers.composite_checkpoint_handler.CompositeCheckpointHandler object at 0x7f037de0c5d0> on /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8 (1057842:async_checkpointer.py:406)
+01:08:59.292 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8/assets.orbax-checkpoint-tmp-9 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8/assets (1057842:atomicity.py:287)
+01:08:59.298 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8/train_state.orbax-checkpoint-tmp-11 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8/train_state (1057842:atomicity.py:287)
+01:08:59.303 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8/params.orbax-checkpoint-tmp-10 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8/params (1057842:atomicity.py:287)
+01:08:59.303 [I] [process=0][thread=async_save] Async Save Callback [2/3]: Running post_finalization_callback: None on /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000 (1057842:async_checkpointer.py:416)
+01:08:59.303 [I] [process=0][thread=async_save] Async Save Callback [3/3]: Finalizing checkpoint directory: /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8 (1057842:async_checkpointer.py:426)
+01:08:59.303 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000.orbax-checkpoint-tmp-8 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000 (1057842:atomicity.py:287)
+01:08:59.304 [I] [process=0][thread=async_save] Finished saving checkpoint (finalized tmp dir) to `/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000`. (1057842:atomicity.py:548)
+01:08:59.304 [I] [process=0][thread=async_save] Background save thread done.                      (1057842:async_checkpointer.py:183)
+01:08:59.304 [I] [process=0][thread=save_finalize] Done with waiting for background save thread=async_save. (1057842:async_checkpointer.py:239)
+01:08:59.304 [I] [process=0][thread=save_finalize] No errors found in background save thread=async_save. (1057842:async_checkpointer.py:249)
+01:08:59.304 [I] [process=0][thread=save_finalize][step=15000] CheckpointManager Save Finalize is syncing with other hosts... (1057842:checkpoint_manager.py:1890)
+01:08:59.304 [I] [process=0][thread=save_finalize][step=15000] CheckpointManager Save Finalize is done on all hosts. (1057842:checkpoint_manager.py:1905)
+                                                                                           
+Step 15100: grad_norm=0.3938, loss=0.0167, param_norm=1380.4866
+Step 15200: grad_norm=0.3879, loss=0.0173, param_norm=1380.4890
+Step 15300: grad_norm=0.3889, loss=0.0163, param_norm=1380.4916
+Step 15400: grad_norm=0.4038, loss=0.0165, param_norm=1380.4944
+Step 15500: grad_norm=0.3817, loss=0.0162, param_norm=1380.4966
+Step 15600: grad_norm=0.3609, loss=0.0169, param_norm=1380.4991
+Step 15700: grad_norm=0.4030, loss=0.0177, param_norm=1380.5012
+Step 15800: grad_norm=0.3846, loss=0.0163, param_norm=1380.5045
+Step 15900: grad_norm=0.3690, loss=0.0160, param_norm=1380.5068
+Step 16000: grad_norm=0.3848, loss=0.0155, param_norm=1380.5094
+Step 16100: grad_norm=0.4006, loss=0.0144, param_norm=1380.5115
+Step 16200: grad_norm=0.4308, loss=0.0175, param_norm=1380.5135
+Step 16300: grad_norm=0.3751, loss=0.0153, param_norm=1380.5159
+Step 16400: grad_norm=0.3626, loss=0.0153, param_norm=1380.5184
+Step 16500: grad_norm=0.3867, loss=0.0154, param_norm=1380.5204
+Step 16600: grad_norm=0.4072, loss=0.0154, param_norm=1380.5225
+Step 16700: grad_norm=0.3921, loss=0.0151, param_norm=1380.5243
+Step 16800: grad_norm=0.3949, loss=0.0150, param_norm=1380.5262
+Step 16900: grad_norm=0.3738, loss=0.0150, param_norm=1380.5282
+Step 17000: grad_norm=0.3741, loss=0.0163, param_norm=1380.5303
+Step 17100: grad_norm=0.3694, loss=0.0148, param_norm=1380.5325
+Step 17200: grad_norm=0.3640, loss=0.0150, param_norm=1380.5341
+Step 17300: grad_norm=0.4014, loss=0.0129, param_norm=1380.5359
+Step 17400: grad_norm=0.3691, loss=0.0142, param_norm=1380.5378
+Step 17500: grad_norm=0.4361, loss=0.0162, param_norm=1380.5397
+Step 17600: grad_norm=0.3850, loss=0.0136, param_norm=1380.5415
+Step 17700: grad_norm=0.4167, loss=0.0145, param_norm=1380.5436
+Step 17800: grad_norm=0.3701, loss=0.0133, param_norm=1380.5453
+Step 17900: grad_norm=0.4088, loss=0.0149, param_norm=1380.5471
+Step 18000: grad_norm=0.4366, loss=0.0145, param_norm=1380.5487
+Step 18100: grad_norm=0.3953, loss=0.0144, param_norm=1380.5503
+Step 18200: grad_norm=0.3884, loss=0.0122, param_norm=1380.5525
+Step 18300: grad_norm=0.4380, loss=0.0156, param_norm=1380.5541
+Step 18400: grad_norm=0.3964, loss=0.0143, param_norm=1380.5555
+Step 18500: grad_norm=0.3742, loss=0.0146, param_norm=1380.5575
+Step 18600: grad_norm=0.3570, loss=0.0120, param_norm=1380.5586
+Step 18700: grad_norm=0.3768, loss=0.0139, param_norm=1380.5599
+Step 18800: grad_norm=0.4117, loss=0.0121, param_norm=1380.5615
+Step 18900: grad_norm=0.3746, loss=0.0120, param_norm=1380.5634
+Step 19000: grad_norm=0.3492, loss=0.0123, param_norm=1380.5641
+Step 19100: grad_norm=0.3800, loss=0.0128, param_norm=1380.5658
+Step 19200: grad_norm=0.4432, loss=0.0120, param_norm=1380.5671
+Step 19300: grad_norm=0.3437, loss=0.0123, param_norm=1380.5684
+Step 19400: grad_norm=0.3489, loss=0.0120, param_norm=1380.5699
+Step 19500: grad_norm=0.3769, loss=0.0133, param_norm=1380.5715
+Step 19600: grad_norm=0.3965, loss=0.0125, param_norm=1380.5728
+Step 19700: grad_norm=0.3534, loss=0.0121, param_norm=1380.5740
+Step 19800: grad_norm=0.3524, loss=0.0109, param_norm=1380.5751
+Step 19900: grad_norm=0.3648, loss=0.0120, param_norm=1380.5759
+Step 20000: grad_norm=0.3682, loss=0.0120, param_norm=1380.5771
+02:23:00.555 [I] [process=0][thread=MainThread][step=15000][wait_until_finished] Waiting for Save Finalize thread (save_finalize) to complete. (1057842:checkpoint_manager.py:1777)
+02:23:00.555 [I] [process=0][thread=MainThread][step=15000][wait_until_finished] Done waiting for Save Finalize thread (save_finalize) running at step=15000. (1057842:checkpoint_manager.py:1786)
+02:23:00.555 [I] [process=0][thread=MainThread][step=15000][wait_until_finished] Resetting Save Finalize thread (save_finalize) running at step=15000, also errors if any. (1057842:checkpoint_manager.py:1817)
+02:23:00.556 [I] [process=0] Saving checkpoint at step 20000                                      (1057842:checkpoint_manager.py:1286)
+02:23:00.556 [I] [process=0] Started async saving checkpoint to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000. (1057842:async_checkpointer.py:358)
+02:23:00.557 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+02:23:00.557 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12 (1057842:atomicity.py:144)
+02:23:00.557 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+02:23:00.558 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+02:23:00.558 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12/assets.orbax-checkpoint-tmp-13 (1057842:atomicity.py:144)
+02:23:00.558 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12/params.orbax-checkpoint-tmp-14 (1057842:atomicity.py:144)
+02:23:00.559 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12/train_state.orbax-checkpoint-tmp-15 (1057842:atomicity.py:144)
+02:23:00.559 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+02:23:00.585 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+02:23:04.017 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+02:23:04.019 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+02:26:12.052 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 37.4 MiB/s (total bytes: 7.0 GiB) (time elapsed: 3 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+02:26:12.055 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+02:26:12.056 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 56.1 MiB/s (total bytes: 10.5 GiB) (time elapsed: 3 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+02:26:12.065 [I] [process=0][thread=async_save] Background save thread started.                   (1057842:async_checkpointer.py:121)
+02:26:12.074 [I] Preserving Checkpoint[step=5000 | time=2026-01-02 14:34:08.758401+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+02:26:12.075 [I] Preserving Checkpoint[step=10000 | time=2026-01-02 15:48:20.012173+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+02:26:12.076 [I] Preserving Checkpoint[step=15000 | time=2026-01-02 17:08:53.653484+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+02:26:12.078 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: CheckpointManager:old_steps_to_remove (1057842:multihost.py:293)
+02:26:12.078 [I] [process=0][thread=MainThread][step=20000] Starting CheckpointManager Save Finalize thread=save_finalize (1057842:checkpoint_manager.py:1328)
+02:26:12.080 [I] [process=0][thread=save_finalize] Waiting for background save thread=async_save. (1057842:async_checkpointer.py:231)
+02:26:12.081 [I] {'step': 20000, 'event_type': 'save', 'directory': '/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right', 'reached_preemption': False, 'preemption_received_at': None, 'synchronous': False, 'wait_for_prev_start_time': 1767378180.5554652, 'wait_for_prev_duration_secs': 0.0004811286926269531, 'checkpointer_blocking_start_time': 1767378180.556337, 'checkpointer_blocking_duration_secs': 191.5182590484619, 'get_old_steps_start_time': 1767378372.074656, 'get_old_steps_duration_secs': 0.003322124481201172, 'checkpoint_manager_blocking_start_time': 1767378180.5553098, 'checkpoint_manager_blocking_duration_secs': 191.52605772018433} (1057842:standard_logger.py:34)
+ 67%|████████████████████████████              | 20001/30000 [5:10:34<162:44:51, 58.60s/it]02:26:12.822 [I] ChainedFuture completed 1/1 futures in 0.75 seconds.                             (1057842:future.py:137)
+02:26:12.823 [I] [process=0] /jax/checkpoint/write/bytes_per_sec: 37.3 MiB/s (total bytes: 7.0 GiB) (time elapsed: 3 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+ 67%|████████████████████████████▋              | 20008/30000 [5:10:39<15:32:12,  5.60s/it]02:26:18.189 [I] ChainedFuture completed 1/1 futures in 5.37 seconds.                             (1057842:future.py:137)
+02:26:18.189 [I] [process=0] /jax/checkpoint/write/bytes_per_sec: 54.3 MiB/s (total bytes: 10.5 GiB) (time elapsed: 3 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+02:26:18.189 [I] [process=0][thread=async_save] 3 Handler Commit operations completed.            (1057842:async_checkpointer.py:131)
+02:26:18.190 [I] [process=0][thread=async_save] Async Save Callback [1/3]: Finalizing Handler: <orbax.checkpoint._src.handlers.composite_checkpoint_handler.CompositeCheckpointHandler object at 0x7f037de0c5d0> on /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12 (1057842:async_checkpointer.py:406)
+02:26:18.190 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12/assets.orbax-checkpoint-tmp-13 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12/assets (1057842:atomicity.py:287)
+02:26:18.196 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12/train_state.orbax-checkpoint-tmp-15 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12/train_state (1057842:atomicity.py:287)
+02:26:18.200 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12/params.orbax-checkpoint-tmp-14 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12/params (1057842:atomicity.py:287)
+02:26:18.201 [I] [process=0][thread=async_save] Async Save Callback [2/3]: Running post_finalization_callback: None on /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000 (1057842:async_checkpointer.py:416)
+02:26:18.721 [I] [process=0][thread=async_save] Async Save Callback [3/3]: Finalizing checkpoint directory: /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12 (1057842:async_checkpointer.py:426)
+02:26:18.724 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000.orbax-checkpoint-tmp-12 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000 (1057842:atomicity.py:287)
+02:26:18.725 [I] [process=0][thread=async_save] Finished saving checkpoint (finalized tmp dir) to `/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/20000`. (1057842:atomicity.py:548)
+02:26:18.725 [I] [process=0][thread=async_save] Background save thread done.                      (1057842:async_checkpointer.py:183)
+02:26:18.725 [I] [process=0][thread=save_finalize] Done with waiting for background save thread=async_save. (1057842:async_checkpointer.py:239)
+02:26:18.726 [I] [process=0][thread=save_finalize] No errors found in background save thread=async_save. (1057842:async_checkpointer.py:249)
+02:26:18.726 [I] [process=0][thread=save_finalize][step=20000] CheckpointManager Save Finalize is syncing with other hosts... (1057842:checkpoint_manager.py:1890)
+02:26:18.726 [I] [process=0][thread=save_finalize][step=20000] CheckpointManager Save Finalize is done on all hosts. (1057842:checkpoint_manager.py:1905)
+                                                                                           
+Step 20100: grad_norm=0.3997, loss=0.0111, param_norm=1380.5781
+Step 20200: grad_norm=0.3912, loss=0.0119, param_norm=1380.5790
+Step 20300: grad_norm=0.3947, loss=0.0124, param_norm=1380.5806
+Step 20400: grad_norm=0.3541, loss=0.0095, param_norm=1380.5817
+Step 20500: grad_norm=0.4093, loss=0.0109, param_norm=1380.5826
+Step 20600: grad_norm=0.3555, loss=0.0105, param_norm=1380.5837
+Step 20700: grad_norm=0.3673, loss=0.0112, param_norm=1380.5847
+Step 20800: grad_norm=0.3544, loss=0.0105, param_norm=1380.5859
+Step 20900: grad_norm=0.3482, loss=0.0106, param_norm=1380.5868
+Step 21000: grad_norm=0.3455, loss=0.0100, param_norm=1380.5875
+Step 21100: grad_norm=0.3870, loss=0.0095, param_norm=1380.5887
+Step 21200: grad_norm=0.3262, loss=0.0089, param_norm=1380.5896
+Step 21300: grad_norm=0.3250, loss=0.0099, param_norm=1380.5906
+Step 21400: grad_norm=0.4054, loss=0.0102, param_norm=1380.5916
+Step 21500: grad_norm=0.3871, loss=0.0104, param_norm=1380.5925
+Step 21600: grad_norm=0.2968, loss=0.0086, param_norm=1380.5934
+Step 21700: grad_norm=0.3445, loss=0.0096, param_norm=1380.5940
+Step 21800: grad_norm=0.3132, loss=0.0096, param_norm=1380.5946
+Step 21900: grad_norm=0.3301, loss=0.0094, param_norm=1380.5953
+Step 22000: grad_norm=0.3416, loss=0.0101, param_norm=1380.5959
+Step 22100: grad_norm=0.3524, loss=0.0099, param_norm=1380.5970
+Step 22200: grad_norm=0.3212, loss=0.0096, param_norm=1380.5977
+Step 22300: grad_norm=0.3574, loss=0.0097, param_norm=1380.5985
+Step 22400: grad_norm=0.2897, loss=0.0084, param_norm=1380.5994
+Step 22500: grad_norm=0.3315, loss=0.0105, param_norm=1380.6000
+Step 22600: grad_norm=0.3522, loss=0.0096, param_norm=1380.6005
+Step 22700: grad_norm=0.3416, loss=0.0095, param_norm=1380.6012
+Step 22800: grad_norm=0.2812, loss=0.0083, param_norm=1380.6018
+Step 22900: grad_norm=0.3247, loss=0.0085, param_norm=1380.6024
+Step 23000: grad_norm=0.3245, loss=0.0089, param_norm=1380.6031
+Step 23100: grad_norm=0.3147, loss=0.0084, param_norm=1380.6038
+Step 23200: grad_norm=0.3134, loss=0.0092, param_norm=1380.6042
+Step 23300: grad_norm=0.3023, loss=0.0085, param_norm=1380.6049
+Step 23400: grad_norm=0.3012, loss=0.0077, param_norm=1380.6052
+Step 23500: grad_norm=0.3062, loss=0.0076, param_norm=1380.6057
+Step 23600: grad_norm=0.3186, loss=0.0095, param_norm=1380.6063
+Step 23700: grad_norm=0.3049, loss=0.0091, param_norm=1380.6068
+Step 23800: grad_norm=0.3055, loss=0.0076, param_norm=1380.6074
+Step 23900: grad_norm=0.3076, loss=0.0082, param_norm=1380.6078
+Step 24000: grad_norm=0.2780, loss=0.0070, param_norm=1380.6084
+Step 24100: grad_norm=0.3874, loss=0.0086, param_norm=1380.6088
+Step 24200: grad_norm=0.3272, loss=0.0077, param_norm=1380.6094
+Step 24300: grad_norm=0.2793, loss=0.0074, param_norm=1380.6096
+Step 24400: grad_norm=0.2950, loss=0.0083, param_norm=1380.6102
+Step 24500: grad_norm=0.3744, loss=0.0082, param_norm=1380.6106
+Step 24600: grad_norm=0.2765, loss=0.0072, param_norm=1380.6110
+Step 24700: grad_norm=0.3075, loss=0.0084, param_norm=1380.6116
+Step 24800: grad_norm=0.2978, loss=0.0076, param_norm=1380.6121
+Step 24900: grad_norm=0.2826, loss=0.0074, param_norm=1380.6123
+Step 25000: grad_norm=0.2875, loss=0.0074, param_norm=1380.6128
+03:40:18.525 [I] [process=0][thread=MainThread][step=20000][wait_until_finished] Waiting for Save Finalize thread (save_finalize) to complete. (1057842:checkpoint_manager.py:1777)
+03:40:18.525 [I] [process=0][thread=MainThread][step=20000][wait_until_finished] Done waiting for Save Finalize thread (save_finalize) running at step=20000. (1057842:checkpoint_manager.py:1786)
+03:40:18.525 [I] [process=0][thread=MainThread][step=20000][wait_until_finished] Resetting Save Finalize thread (save_finalize) running at step=20000, also errors if any. (1057842:checkpoint_manager.py:1817)
+03:40:18.525 [I] [process=0] Saving checkpoint at step 25000                                      (1057842:checkpoint_manager.py:1286)
+03:40:18.526 [I] [process=0] Started async saving checkpoint to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000. (1057842:async_checkpointer.py:358)
+03:40:18.526 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+03:40:18.527 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16 (1057842:atomicity.py:144)
+03:40:18.527 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+03:40:18.527 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+03:40:18.528 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16/assets.orbax-checkpoint-tmp-17 (1057842:atomicity.py:144)
+03:40:18.528 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16/params.orbax-checkpoint-tmp-18 (1057842:atomicity.py:144)
+03:40:18.528 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16/train_state.orbax-checkpoint-tmp-19 (1057842:atomicity.py:144)
+03:40:18.528 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+03:40:18.554 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+03:43:26.137 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+03:43:26.139 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+03:45:36.880 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 22.5 MiB/s (total bytes: 7.0 GiB) (time elapsed: 5 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+03:45:36.882 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+03:45:36.884 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 33.7 MiB/s (total bytes: 10.5 GiB) (time elapsed: 5 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+03:45:36.893 [I] [process=0][thread=async_save] Background save thread started.                   (1057842:async_checkpointer.py:121)
+03:45:36.905 [I] Preserving Checkpoint[step=5000 | time=2026-01-02 14:34:08.758401+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+03:45:36.906 [I] Preserving Checkpoint[step=10000 | time=2026-01-02 15:48:20.012173+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+03:45:36.906 [I] Preserving Checkpoint[step=15000 | time=2026-01-02 17:08:53.653484+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+03:45:37.010 [I] Preserving Checkpoint[step=20000 | time=2026-01-02 18:26:12.074617+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+03:45:37.011 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: CheckpointManager:old_steps_to_remove (1057842:multihost.py:293)
+03:45:37.012 [I] [process=0][thread=MainThread][step=25000] Starting CheckpointManager Save Finalize thread=save_finalize (1057842:checkpoint_manager.py:1328)
+03:45:37.013 [I] ChainedFuture completed 1/1 futures in 0.11 seconds.                             (1057842:future.py:137)
+03:45:37.014 [I] [process=0][thread=save_finalize] Waiting for background save thread=async_save. (1057842:async_checkpointer.py:231)
+03:45:37.015 [I] {'step': 25000, 'event_type': 'save', 'directory': '/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right', 'reached_preemption': False, 'preemption_received_at': None, 'synchronous': False, 'wait_for_prev_start_time': 1767382818.524916, 'wait_for_prev_duration_secs': 0.0005304813385009766, 'checkpointer_blocking_start_time': 1767382818.5258412, 'checkpointer_blocking_duration_secs': 318.3793249130249, 'get_old_steps_start_time': 1767383136.9052393, 'get_old_steps_duration_secs': 0.10649323463439941, 'checkpoint_manager_blocking_start_time': 1767382818.5247724, 'checkpoint_manager_blocking_duration_secs': 318.4908335208893} (1057842:standard_logger.py:34)
+ 83%|███████████████████████████████████       | 25001/30000 [6:29:59<134:15:28, 96.68s/it]03:45:37.016 [I] [process=0] /jax/checkpoint/write/bytes_per_sec: 22.5 MiB/s (total bytes: 7.0 GiB) (time elapsed: 5 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+ 83%|███████████████████████████████████▊       | 25008/30000 [6:30:04<12:07:19,  8.74s/it]03:45:42.893 [I] ChainedFuture completed 1/1 futures in 5.86 seconds.                             (1057842:future.py:137)
+03:45:42.893 [I] [process=0] /jax/checkpoint/write/bytes_per_sec: 33.1 MiB/s (total bytes: 10.5 GiB) (time elapsed: 5 minutes) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+03:45:42.893 [I] [process=0][thread=async_save] 3 Handler Commit operations completed.            (1057842:async_checkpointer.py:131)
+03:45:42.894 [I] [process=0][thread=async_save] Async Save Callback [1/3]: Finalizing Handler: <orbax.checkpoint._src.handlers.composite_checkpoint_handler.CompositeCheckpointHandler object at 0x7f037de0c5d0> on /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16 (1057842:async_checkpointer.py:406)
+03:45:42.894 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16/assets.orbax-checkpoint-tmp-17 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16/assets (1057842:atomicity.py:287)
+03:45:42.901 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16/train_state.orbax-checkpoint-tmp-19 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16/train_state (1057842:atomicity.py:287)
+03:45:42.906 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16/params.orbax-checkpoint-tmp-18 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16/params (1057842:atomicity.py:287)
+03:45:42.907 [I] [process=0][thread=async_save] Async Save Callback [2/3]: Running post_finalization_callback: None on /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000 (1057842:async_checkpointer.py:416)
+03:45:42.907 [I] [process=0][thread=async_save] Async Save Callback [3/3]: Finalizing checkpoint directory: /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16 (1057842:async_checkpointer.py:426)
+03:45:42.907 [I] Renaming /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000.orbax-checkpoint-tmp-16 to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000 (1057842:atomicity.py:287)
+03:45:42.907 [I] [process=0][thread=async_save] Finished saving checkpoint (finalized tmp dir) to `/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/25000`. (1057842:atomicity.py:548)
+03:45:42.907 [I] [process=0][thread=async_save] Background save thread done.                      (1057842:async_checkpointer.py:183)
+03:45:42.908 [I] [process=0][thread=save_finalize] Done with waiting for background save thread=async_save. (1057842:async_checkpointer.py:239)
+03:45:42.908 [I] [process=0][thread=save_finalize] No errors found in background save thread=async_save. (1057842:async_checkpointer.py:249)
+03:45:42.908 [I] [process=0][thread=save_finalize][step=25000] CheckpointManager Save Finalize is syncing with other hosts... (1057842:checkpoint_manager.py:1890)
+03:45:42.908 [I] [process=0][thread=save_finalize][step=25000] CheckpointManager Save Finalize is done on all hosts. (1057842:checkpoint_manager.py:1905)
+                                                                                           
+Step 25100: grad_norm=0.2995, loss=0.0079, param_norm=1380.6133
+Step 25200: grad_norm=0.2754, loss=0.0068, param_norm=1380.6135
+Step 25300: grad_norm=0.3065, loss=0.0077, param_norm=1380.6139
+Step 25400: grad_norm=0.2660, loss=0.0065, param_norm=1380.6144
+Step 25500: grad_norm=0.3716, loss=0.0076, param_norm=1380.6150
+Step 25600: grad_norm=0.2651, loss=0.0067, param_norm=1380.6152
+Step 25700: grad_norm=0.2668, loss=0.0072, param_norm=1380.6156
+Step 25800: grad_norm=0.3149, loss=0.0064, param_norm=1380.6160
+Step 25900: grad_norm=0.3149, loss=0.0073, param_norm=1380.6162
+Step 26000: grad_norm=0.3149, loss=0.0070, param_norm=1380.6166
+Step 26100: grad_norm=0.2327, loss=0.0055, param_norm=1380.6168
+Step 26200: grad_norm=0.2809, loss=0.0081, param_norm=1380.6172
+Step 26300: grad_norm=0.2516, loss=0.0071, param_norm=1380.6174
+Step 26400: grad_norm=0.2805, loss=0.0072, param_norm=1380.6178
+Step 26500: grad_norm=0.2601, loss=0.0065, param_norm=1380.6180
+Step 26600: grad_norm=0.2651, loss=0.0066, param_norm=1380.6184
+Step 26700: grad_norm=0.2825, loss=0.0071, param_norm=1380.6188
+Step 26800: grad_norm=0.2880, loss=0.0077, param_norm=1380.6190
+Step 26900: grad_norm=0.2581, loss=0.0060, param_norm=1380.6190
+Step 27000: grad_norm=0.2602, loss=0.0063, param_norm=1380.6194
+Step 27100: grad_norm=0.2739, loss=0.0066, param_norm=1380.6196
+Step 27200: grad_norm=0.2488, loss=0.0058, param_norm=1380.6200
+Step 27300: grad_norm=0.3316, loss=0.0067, param_norm=1380.6201
+Step 27400: grad_norm=0.3091, loss=0.0068, param_norm=1380.6205
+Step 27500: grad_norm=0.3274, loss=0.0067, param_norm=1380.6207
+Step 27600: grad_norm=0.2376, loss=0.0058, param_norm=1380.6211
+Step 27700: grad_norm=0.3266, loss=0.0074, param_norm=1380.6213
+Step 27800: grad_norm=0.2444, loss=0.0056, param_norm=1380.6216
+Step 27900: grad_norm=0.2715, loss=0.0058, param_norm=1380.6218
+Step 28000: grad_norm=0.2712, loss=0.0063, param_norm=1380.6222
+Step 28100: grad_norm=0.3302, loss=0.0066, param_norm=1380.6224
+Step 28200: grad_norm=0.2919, loss=0.0062, param_norm=1380.6224
+Step 28300: grad_norm=0.2432, loss=0.0056, param_norm=1380.6228
+Step 28400: grad_norm=0.2756, loss=0.0067, param_norm=1380.6230
+Step 28500: grad_norm=0.2894, loss=0.0059, param_norm=1380.6234
+Step 28600: grad_norm=0.2727, loss=0.0059, param_norm=1380.6234
+Step 28700: grad_norm=0.2788, loss=0.0064, param_norm=1380.6238
+Step 28800: grad_norm=0.2709, loss=0.0057, param_norm=1380.6240
+Step 28900: grad_norm=0.2870, loss=0.0067, param_norm=1380.6240
+Step 29000: grad_norm=0.2890, loss=0.0066, param_norm=1380.6244
+Step 29100: grad_norm=0.2958, loss=0.0059, param_norm=1380.6244
+Step 29200: grad_norm=0.3313, loss=0.0061, param_norm=1380.6246
+Step 29300: grad_norm=0.3141, loss=0.0057, param_norm=1380.6250
+Step 29400: grad_norm=0.3098, loss=0.0069, param_norm=1380.6252
+Step 29500: grad_norm=0.2306, loss=0.0049, param_norm=1380.6252
+Step 29600: grad_norm=0.3383, loss=0.0068, param_norm=1380.6256
+Step 29700: grad_norm=0.2571, loss=0.0057, param_norm=1380.6256
+Step 29800: grad_norm=0.2573, loss=0.0059, param_norm=1380.6259
+Step 29900: grad_norm=0.2459, loss=0.0053, param_norm=1380.6262
+04:59:52.531 [I] [process=0][thread=MainThread][step=25000][wait_until_finished] Waiting for Save Finalize thread (save_finalize) to complete. (1057842:checkpoint_manager.py:1777)
+04:59:52.531 [I] [process=0][thread=MainThread][step=25000][wait_until_finished] Done waiting for Save Finalize thread (save_finalize) running at step=25000. (1057842:checkpoint_manager.py:1786)
+04:59:52.531 [I] [process=0][thread=MainThread][step=25000][wait_until_finished] Resetting Save Finalize thread (save_finalize) running at step=25000, also errors if any. (1057842:checkpoint_manager.py:1817)
+04:59:52.531 [I] [process=0] Saving checkpoint at step 30000                                      (1057842:checkpoint_manager.py:1286)
+04:59:52.532 [I] [process=0] Started async saving checkpoint to /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000. (1057842:async_checkpointer.py:358)
+04:59:52.532 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+04:59:52.533 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000.orbax-checkpoint-tmp-20 (1057842:atomicity.py:144)
+04:59:52.533 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+04:59:52.533 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:pre (1057842:multihost.py:293)
+04:59:52.534 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000.orbax-checkpoint-tmp-20/assets.orbax-checkpoint-tmp-21 (1057842:atomicity.py:144)
+04:59:52.534 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000.orbax-checkpoint-tmp-20/params.orbax-checkpoint-tmp-22 (1057842:atomicity.py:144)
+04:59:52.534 [I] Creating tmp directory /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000.orbax-checkpoint-tmp-20/train_state.orbax-checkpoint-tmp-23 (1057842:atomicity.py:144)
+04:59:52.534 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: create_tmp_directory:post (1057842:multihost.py:293)
+04:59:52.561 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+05:01:00.403 [I] Transferring arrays to host memory with options: use_replica_parallel=False, enable_pinned_host_transfer=False (1057842:replica_slices.py:419)
+05:01:00.404 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+05:01:48.351 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 61.9 MiB/s (total bytes: 7.0 GiB) (time elapsed: a minute) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+05:01:48.353 [I] Array name: 'params.PaliGemma.llm.layers.mlp.gating_einsum.value', global shape: (18, 2, 2048, 16384), write shape: (18, 2, 2048, 16384), chosen chunk shape: (18, 2, 2048, 8192) (1057842:tensorstore_utils.py:371)
+05:01:48.358 [I] [process=0] /jax/checkpoint/write/blocking_bytes_per_sec: 92.7 MiB/s (total bytes: 10.5 GiB) (time elapsed: a minute) (per-host) (1057842:base_pytree_checkpoint_handler.py:113)
+05:01:48.369 [I] [process=0][thread=async_save] Background save thread started.                   (1057842:async_checkpointer.py:121)
+05:01:48.372 [E] [process=0] Failed to run 3 Handler Commit operations or the Commit callback in background save thread, directory: /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000 (1057842:async_checkpointer.py:195)
+Traceback (most recent call last):
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/checkpointers/async_checkpointer.py", line 130, in _thread_func
+    commit_future.result()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 127, in result
+    f.result(timeout=time_remaining)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 293, in result
+    return self._t.join(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 247, in join
+    raise self._exception
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 238, in run
+    super().run()
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 286, in <lambda>
+    target=lambda: asyncio_utils.run_sync(coro),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/asyncio_utils.py", line 50, in run_sync
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/handlers/base_pytree_checkpoint_handler.py", line 861, in _write_metadata_after_commits
+    await asyncio.to_thread(commit_future.result)
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 372, in result
+    return self._f.result(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 293, in result
+    return self._t.join(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 247, in join
+    raise self._exception
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 238, in run
+    super().run()
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 286, in <lambda>
+    target=lambda: asyncio_utils.run_sync(coro),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/asyncio_utils.py", line 50, in run_sync
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/serialization/type_handlers.py", line 1078, in _background_serialize
+    await asyncio.gather(*write_coros)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/serialization/serialization.py", line 371, in async_serialize_from_host
+    await asyncio.gather(*write_coros)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/serialization/serialization.py", line 359, in write_fragment
+    await t[fragment.index].write(
+ValueError: RESOURCE_EXHAUSTED: Error writing "params.PaliGemma.img.Transformer.encoderblock.MultiHeadDotProductAttention_0.out.bias.value/0.0" in OCDBT database at local file "/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000.orbax-checkpoint-tmp-20/params.orbax-checkpoint-tmp-22/ocdbt.process_0/": Failed writing: "/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000.orbax-checkpoint-tmp-20/params.orbax-checkpoint-tmp-22/ocdbt.process_0/d/30b3e281a1f0f4be33ec5ec492f42fed.__lock": Failed to write to file [OS error 28: ENOSPC No space left on device] [source locations='tensorstore/internal/os/file_util_posix.cc:317\ntensorstore/kvstore/file/file_key_value_store.cc:601\ntensorstore/kvstore/file/file_key_value_store.cc:601\ntensorstore/kvstore/file/file_key_value_store.cc:665\ntensorstore/kvstore/transaction.cc:124']
+05:01:48.373 [I] Preserving Checkpoint[step=5000 | time=2026-01-02 14:34:08.758401+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+05:01:48.402 [I] Preserving Checkpoint[step=10000 | time=2026-01-02 15:48:20.012173+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+05:01:48.403 [I] Preserving Checkpoint[step=15000 | time=2026-01-02 17:08:53.653484+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+05:01:48.403 [I] Preserving Checkpoint[step=20000 | time=2026-01-02 18:26:12.074617+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+05:01:48.403 [I] Preserving Checkpoint[step=25000 | time=2026-01-02 19:45:36.905192+00:00 | is_locked=None]: (Reason: on keep_period=5000). (1057842:checkpoint_manager.py:1734)
+05:01:48.404 [I] [process=0][thread=MainThread] Skipping global process sync, barrier name: CheckpointManager:old_steps_to_remove (1057842:multihost.py:293)
+05:01:48.404 [I] [process=0][thread=MainThread][step=30000] Starting CheckpointManager Save Finalize thread=save_finalize (1057842:checkpoint_manager.py:1328)
+05:01:48.407 [I] [process=0][thread=save_finalize] Waiting for background save thread=async_save. (1057842:async_checkpointer.py:231)
+05:01:48.408 [I] [process=0][thread=save_finalize] Done with waiting for background save thread=async_save. (1057842:async_checkpointer.py:239)
+05:01:48.409 [I] {'step': 30000, 'event_type': 'save', 'directory': '/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right', 'reached_preemption': False, 'preemption_received_at': None, 'synchronous': False, 'wait_for_prev_start_time': 1767387592.5307114, 'wait_for_prev_duration_secs': 0.000583648681640625, 'checkpointer_blocking_start_time': 1767387592.5317147, 'checkpointer_blocking_duration_secs': 115.8415732383728, 'get_old_steps_start_time': 1767387708.373315, 'get_old_steps_duration_secs': 0.031233549118041992, 'checkpoint_manager_blocking_start_time': 1767387592.5305643, 'checkpoint_manager_blocking_duration_secs': 115.87919330596924} (1057842:standard_logger.py:34)
+100%|██████████████████████████████████████████████| 30000/30000 [7:46:10<00:00,  1.07it/s]
+05:01:48.415 [I] Waiting for checkpoint manager to finish                                         (1057842:train_dual_vla.py:462)
+05:01:48.416 [I] [process=0][thread=MainThread][wait_until_finished] Initiating wait for Save Finalize thread. (1057842:checkpoint_manager.py:1759)
+05:01:48.418 [I] [process=0][thread=MainThread][step=30000][wait_until_finished] Waiting for Save Finalize thread (save_finalize) to complete. (1057842:checkpoint_manager.py:1777)
+05:01:48.419 [E] [process=0][thread=MainThread][step=30000][wait_until_finished] Save Finalize thread (save_finalize) failed. (1057842:checkpoint_manager.py:1796)
+Traceback (most recent call last):
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/checkpoint_manager.py", line 1785, in wait_until_finished
+    self._finalize_thread.join()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/checkpoint_manager.py", line 158, in join
+    raise self.exception
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/checkpoint_manager.py", line 151, in run
+    super().run()
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/checkpoint_manager.py", line 1880, in _finalize
+    self._wait_for_checkpointers()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/checkpoint_manager.py", line 1754, in _wait_for_checkpointers
+    self._checkpointer.wait_until_finished()  # pytype: disable=attribute-error
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/checkpointers/async_checkpointer.py", line 483, in wait_until_finished
+    self._async_manager.wait_until_finished()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/checkpointers/async_checkpointer.py", line 247, in wait_until_finished
+    self.check_for_errors()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/checkpointers/async_checkpointer.py", line 222, in check_for_errors
+    raise exception  # pylint: disable=raising-bad-type
+    ^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/checkpointers/async_checkpointer.py", line 130, in _thread_func
+    commit_future.result()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 127, in result
+    f.result(timeout=time_remaining)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 293, in result
+    return self._t.join(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 247, in join
+    raise self._exception
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 238, in run
+    super().run()
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 286, in <lambda>
+    target=lambda: asyncio_utils.run_sync(coro),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/asyncio_utils.py", line 50, in run_sync
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/handlers/base_pytree_checkpoint_handler.py", line 861, in _write_metadata_after_commits
+    await asyncio.to_thread(commit_future.result)
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 372, in result
+    return self._f.result(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 293, in result
+    return self._t.join(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 247, in join
+    raise self._exception
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 238, in run
+    super().run()
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 286, in <lambda>
+    target=lambda: asyncio_utils.run_sync(coro),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/asyncio_utils.py", line 50, in run_sync
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/serialization/type_handlers.py", line 1078, in _background_serialize
+    await asyncio.gather(*write_coros)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/serialization/serialization.py", line 371, in async_serialize_from_host
+    await asyncio.gather(*write_coros)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/serialization/serialization.py", line 359, in write_fragment
+    await t[fragment.index].write(
+ValueError: RESOURCE_EXHAUSTED: Error writing "params.PaliGemma.img.Transformer.encoderblock.MultiHeadDotProductAttention_0.out.bias.value/0.0" in OCDBT database at local file "/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000.orbax-checkpoint-tmp-20/params.orbax-checkpoint-tmp-22/ocdbt.process_0/": Failed writing: "/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000.orbax-checkpoint-tmp-20/params.orbax-checkpoint-tmp-22/ocdbt.process_0/d/30b3e281a1f0f4be33ec5ec492f42fed.__lock": Failed to write to file [OS error 28: ENOSPC No space left on device] [source locations='tensorstore/internal/os/file_util_posix.cc:317\ntensorstore/kvstore/file/file_key_value_store.cc:601\ntensorstore/kvstore/file/file_key_value_store.cc:601\ntensorstore/kvstore/file/file_key_value_store.cc:665\ntensorstore/kvstore/transaction.cc:124']
+05:01:48.425 [I] [process=0][thread=MainThread][step=30000][wait_until_finished] Resetting Save Finalize thread (save_finalize) running at step=30000, also errors if any. (1057842:checkpoint_manager.py:1817)
+Traceback (most recent call last):
+  File "/data0/users/haoce/RoboTwin/policy/TwinVLA1/scripts/train_dual_vla.py", line 469, in <module>
+    main(args)
+  File "/data0/users/haoce/RoboTwin/policy/TwinVLA1/scripts/train_dual_vla.py", line 463, in main
+    checkpoint_manager.wait_until_finished()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/checkpoint_manager.py", line 1785, in wait_until_finished
+    self._finalize_thread.join()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/checkpoint_manager.py", line 158, in join
+    raise self.exception
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/checkpoint_manager.py", line 151, in run
+    super().run()
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/checkpoint_manager.py", line 1880, in _finalize
+    self._wait_for_checkpointers()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/checkpoint_manager.py", line 1754, in _wait_for_checkpointers
+    self._checkpointer.wait_until_finished()  # pytype: disable=attribute-error
+    ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/checkpointers/async_checkpointer.py", line 483, in wait_until_finished
+    self._async_manager.wait_until_finished()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/checkpointers/async_checkpointer.py", line 247, in wait_until_finished
+    self.check_for_errors()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/checkpointers/async_checkpointer.py", line 222, in check_for_errors
+    raise exception  # pylint: disable=raising-bad-type
+    ^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/checkpointers/async_checkpointer.py", line 130, in _thread_func
+    commit_future.result()
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 127, in result
+    f.result(timeout=time_remaining)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 293, in result
+    return self._t.join(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 247, in join
+    raise self._exception
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 238, in run
+    super().run()
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 286, in <lambda>
+    target=lambda: asyncio_utils.run_sync(coro),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/asyncio_utils.py", line 50, in run_sync
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/handlers/base_pytree_checkpoint_handler.py", line 861, in _write_metadata_after_commits
+    await asyncio.to_thread(commit_future.result)
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/threads.py", line 25, in to_thread
+    return await loop.run_in_executor(None, func_call)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/concurrent/futures/thread.py", line 58, in run
+    result = self.fn(*self.args, **self.kwargs)
+             ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 372, in result
+    return self._f.result(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 293, in result
+    return self._t.join(timeout=timeout)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 247, in join
+    raise self._exception
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 238, in run
+    super().run()
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/threading.py", line 982, in run
+    self._target(*self._args, **self._kwargs)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/futures/future.py", line 286, in <lambda>
+    target=lambda: asyncio_utils.run_sync(coro),
+                   ^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/asyncio_utils.py", line 50, in run_sync
+    return asyncio.run(coro)
+           ^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 190, in run
+    return runner.run(main)
+           ^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/runners.py", line 118, in run
+    return self._loop.run_until_complete(task)
+           ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/.local/share/uv/python/cpython-3.11.14-linux-x86_64-gnu/lib/python3.11/asyncio/base_events.py", line 654, in run_until_complete
+    return future.result()
+           ^^^^^^^^^^^^^^^
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/serialization/type_handlers.py", line 1078, in _background_serialize
+    await asyncio.gather(*write_coros)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/serialization/serialization.py", line 371, in async_serialize_from_host
+    await asyncio.gather(*write_coros)
+  File "/data0/users/haoce/RoboTwin/policy/pi0/.venv/lib/python3.11/site-packages/orbax/checkpoint/_src/serialization/serialization.py", line 359, in write_fragment
+    await t[fragment.index].write(
+ValueError: RESOURCE_EXHAUSTED: Error writing "params.PaliGemma.img.Transformer.encoderblock.MultiHeadDotProductAttention_0.out.bias.value/0.0" in OCDBT database at local file "/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000.orbax-checkpoint-tmp-20/params.orbax-checkpoint-tmp-22/ocdbt.process_0/": Failed writing: "/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/30000.orbax-checkpoint-tmp-20/params.orbax-checkpoint-tmp-22/ocdbt.process_0/d/30b3e281a1f0f4be33ec5ec492f42fed.__lock": Failed to write to file [OS error 28: ENOSPC No space left on device] [source locations='tensorstore/internal/os/file_util_posix.cc:317\ntensorstore/kvstore/file/file_key_value_store.cc:601\ntensorstore/kvstore/file/file_key_value_store.cc:601\ntensorstore/kvstore/file/file_key_value_store.cc:665\ntensorstore/kvstore/transaction.cc:124']

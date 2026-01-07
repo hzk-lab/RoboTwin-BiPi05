@@ -11,6 +11,7 @@ import flax.traverse_util as traverse_util
 import jax
 import jax.experimental
 import jax.numpy as jnp
+import numpy as np
 import optax
 import tqdm_loggable.auto as tqdm
 import wandb
@@ -25,6 +26,8 @@ import openpi.training.optimizer as _optimizer
 import openpi.training.sharding as sharding
 import openpi.training.utils as training_utils
 import openpi.training.weight_loaders as _weight_loaders
+import openpi.shared.download as download
+import sentencepiece
 
 
 def init_logging():
@@ -274,8 +277,33 @@ def main(config: _config.TrainConfig):
         dynamic_ncols=True,
     )
 
+    # 初始化 sentencepiece tokenizer 用于 decode prompt
+    try:
+        tokenizer_path = download.maybe_download("gs://big_vision/paligemma_tokenizer.model", gs={"token": "anon"})
+        with tokenizer_path.open("rb") as f:
+            sp_tokenizer = sentencepiece.SentencePieceProcessor(model_proto=f.read())
+        logging.info("Loaded PaliGemma tokenizer for prompt decoding")
+    except Exception as e:
+        sp_tokenizer = None
+        logging.warning(f"Failed to load tokenizer for prompt decoding: {e}")
+
     infos = []
     for step in pbar:
+        # 打印当前 batch 的 prompt（decode 为文本），便于检查训练时使用的指令
+        try:
+            obs_batch, _ = batch
+            prompt_tokens = np.asarray(obs_batch.tokenized_prompt)
+            # Decode token IDs 回文本
+            if sp_tokenizer is not None:
+                # 取第一个样本，过滤掉 padding (0 或 False)
+                valid_tokens = [int(t) for t in prompt_tokens[0] if t not in (0, False)]
+                decoded_prompt = sp_tokenizer.decode(valid_tokens)
+                logging.info(f"[prompt] step={step} decoded_prompt: {decoded_prompt}")
+            else:
+                logging.info(f"[prompt] step={step} prompt_ids[0][:16]={prompt_tokens[0, :16]}")
+        except Exception as e:  # noqa: BLE001
+            logging.warning(f"Failed to log prompt: {e}")
+
         with sharding.set_mesh(mesh):
             train_state, info = ptrain_step(train_rng, train_state, batch)
         infos.append(info)

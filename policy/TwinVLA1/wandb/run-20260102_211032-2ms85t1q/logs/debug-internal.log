@@ -1,0 +1,16 @@
+{"time":"2026-01-02T21:10:32.635766481+08:00","level":"INFO","msg":"using version","core version":"0.19.1"}
+{"time":"2026-01-02T21:10:32.635779252+08:00","level":"INFO","msg":"created symlink","path":"/data0/users/haoce/RoboTwin/policy/TwinVLA1/wandb/run-20260102_211032-2ms85t1q/logs/debug-core.log"}
+{"time":"2026-01-02T21:10:32.744780505+08:00","level":"INFO","msg":"created new stream","id":"2ms85t1q"}
+{"time":"2026-01-02T21:10:32.744810888+08:00","level":"INFO","msg":"stream: started","id":"2ms85t1q"}
+{"time":"2026-01-02T21:10:32.744835262+08:00","level":"INFO","msg":"handler: started","stream_id":"2ms85t1q"}
+{"time":"2026-01-02T21:10:32.744952839+08:00","level":"INFO","msg":"sender: started","stream_id":"2ms85t1q"}
+{"time":"2026-01-02T21:10:32.744953942+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"2ms85t1q"}
+{"time":"2026-01-02T21:10:33.461798539+08:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-01-02T21:10:36.124431013+08:00","level":"INFO","msg":"stream: closing","id":"2ms85t1q"}
+{"time":"2026-01-02T21:10:36.124452241+08:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-01-02T21:10:36.125097318+08:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-01-02T21:10:38.035255973+08:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-01-02T21:10:38.617651297+08:00","level":"INFO","msg":"handler: closed","stream_id":"2ms85t1q"}
+{"time":"2026-01-02T21:10:38.617706678+08:00","level":"INFO","msg":"sender: closed","stream_id":"2ms85t1q"}
+{"time":"2026-01-02T21:10:38.617688117+08:00","level":"INFO","msg":"writer: Close: closed","stream_id":"2ms85t1q"}
+{"time":"2026-01-02T21:10:38.617819905+08:00","level":"INFO","msg":"stream: closed","id":"2ms85t1q"}

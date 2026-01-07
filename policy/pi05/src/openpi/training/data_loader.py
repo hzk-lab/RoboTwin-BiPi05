@@ -127,6 +127,20 @@ class FakeDataset(Dataset):
         return self._num_samples
 
 
+def create_dataset(data_config: _config.DataConfig, model_config: _model.BaseModelConfig) -> Dataset:
+    """Backward-compatible dataset constructor used by utility scripts.
+
+    We reuse the torch dataset path (LeRobot + prompt transforms) so older
+    callers like `compute_norm_stats.py` keep working without duplicating
+    logic.
+    """
+    return create_torch_dataset(
+        data_config,
+        action_horizon=model_config.action_horizon,
+        model_config=model_config,
+    )
+
+
 def create_torch_dataset(
     data_config: _config.DataConfig, action_horizon: int, model_config: _model.BaseModelConfig
 ) -> Dataset:

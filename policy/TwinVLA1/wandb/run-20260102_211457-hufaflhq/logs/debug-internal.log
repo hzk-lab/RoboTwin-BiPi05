@@ -1,0 +1,23 @@
+{"time":"2026-01-02T21:14:57.487130966+08:00","level":"INFO","msg":"using version","core version":"0.19.1"}
+{"time":"2026-01-02T21:14:57.487139434+08:00","level":"INFO","msg":"created symlink","path":"/data0/users/haoce/RoboTwin/policy/TwinVLA1/wandb/run-20260102_211457-hufaflhq/logs/debug-core.log"}
+{"time":"2026-01-02T21:14:57.594551471+08:00","level":"INFO","msg":"created new stream","id":"hufaflhq"}
+{"time":"2026-01-02T21:14:57.594577354+08:00","level":"INFO","msg":"stream: started","id":"hufaflhq"}
+{"time":"2026-01-02T21:14:57.594588677+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"hufaflhq"}
+{"time":"2026-01-02T21:14:57.594590283+08:00","level":"INFO","msg":"handler: started","stream_id":"hufaflhq"}
+{"time":"2026-01-02T21:14:57.594593986+08:00","level":"INFO","msg":"sender: started","stream_id":"hufaflhq"}
+{"time":"2026-01-02T21:14:58.34605363+08:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-01-02T21:55:02.494635181+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hufaflhq/file_stream\": EOF"}
+{"time":"2026-01-02T22:19:02.687732381+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hufaflhq/file_stream\": EOF"}
+{"time":"2026-01-03T00:34:47.442676388+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hufaflhq/file_stream\": EOF"}
+{"time":"2026-01-03T01:00:32.8901035+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hufaflhq/file_stream\": EOF"}
+{"time":"2026-01-03T01:02:45.192772371+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hufaflhq/file_stream\": EOF"}
+{"time":"2026-01-03T01:59:32.428450158+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hufaflhq/file_stream\": EOF"}
+{"time":"2026-01-03T03:05:32.43176145+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hufaflhq/file_stream\": EOF"}
+{"time":"2026-01-03T05:01:48.782047629+08:00","level":"INFO","msg":"stream: closing","id":"hufaflhq"}
+{"time":"2026-01-03T05:01:48.782119077+08:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-01-03T05:01:48.782991055+08:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-01-03T05:01:51.088406797+08:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-01-03T05:01:51.844800294+08:00","level":"INFO","msg":"handler: closed","stream_id":"hufaflhq"}
+{"time":"2026-01-03T05:01:51.844840819+08:00","level":"INFO","msg":"sender: closed","stream_id":"hufaflhq"}
+{"time":"2026-01-03T05:01:51.844837511+08:00","level":"INFO","msg":"writer: Close: closed","stream_id":"hufaflhq"}
+{"time":"2026-01-03T05:01:51.844907923+08:00","level":"INFO","msg":"stream: closed","id":"hufaflhq"}

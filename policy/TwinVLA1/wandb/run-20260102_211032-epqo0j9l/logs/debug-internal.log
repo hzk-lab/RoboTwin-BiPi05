@@ -1,0 +1,16 @@
+{"time":"2026-01-02T21:10:32.643445733+08:00","level":"INFO","msg":"using version","core version":"0.19.1"}
+{"time":"2026-01-02T21:10:32.64345504+08:00","level":"INFO","msg":"created symlink","path":"/data0/users/haoce/RoboTwin/policy/TwinVLA1/wandb/run-20260102_211032-epqo0j9l/logs/debug-core.log"}
+{"time":"2026-01-02T21:10:32.750974361+08:00","level":"INFO","msg":"created new stream","id":"epqo0j9l"}
+{"time":"2026-01-02T21:10:32.751004872+08:00","level":"INFO","msg":"stream: started","id":"epqo0j9l"}
+{"time":"2026-01-02T21:10:32.75101771+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"epqo0j9l"}
+{"time":"2026-01-02T21:10:32.751018681+08:00","level":"INFO","msg":"sender: started","stream_id":"epqo0j9l"}
+{"time":"2026-01-02T21:10:32.751023203+08:00","level":"INFO","msg":"handler: started","stream_id":"epqo0j9l"}
+{"time":"2026-01-02T21:10:33.492955768+08:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-01-02T21:10:35.220154116+08:00","level":"INFO","msg":"stream: closing","id":"epqo0j9l"}
+{"time":"2026-01-02T21:10:35.220182443+08:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-01-02T21:10:35.222069517+08:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-01-02T21:10:36.83982147+08:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-01-02T21:10:37.53729752+08:00","level":"INFO","msg":"handler: closed","stream_id":"epqo0j9l"}
+{"time":"2026-01-02T21:10:37.537316631+08:00","level":"INFO","msg":"sender: closed","stream_id":"epqo0j9l"}
+{"time":"2026-01-02T21:10:37.537317083+08:00","level":"INFO","msg":"writer: Close: closed","stream_id":"epqo0j9l"}
+{"time":"2026-01-02T21:10:37.537369202+08:00","level":"INFO","msg":"stream: closed","id":"epqo0j9l"}

@@ -9,9 +9,11 @@ train_config_name=${3}
 model_name=${4}
 seed=${5}
 gpu_id=${6}
+test_num=${7:-100}  # 默认 100 个 episode
 
 export CUDA_VISIBLE_DEVICES=${gpu_id}
 echo -e "\033[33mgpu id (to use): ${gpu_id}\033[0m"
+echo -e "\033[33mtest_num (episodes): ${test_num}\033[0m"
 
 source .venv/bin/activate
 cd ../.. # move to root
@@ -25,4 +27,5 @@ python script/eval_policy.py --config policy/$policy_name/deploy_policy.yml \
     --model_name ${model_name} \
     --ckpt_setting ${model_name} \
     --seed ${seed} \
-    --policy_name ${policy_name} 
+    --policy_name ${policy_name} \
+    --test_num ${test_num} 

@@ -39,6 +39,9 @@ class Pi0Config(_model.BaseModelConfig):
     discrete_state_input: bool = None  # type: ignore
     # Dual-arm mode: split action expert into left/right arm experts with cross-attention
     dual_arm: bool = False
+    # Actual action dimension per arm (excluding padding), e.g., 7 for 6 joints + 1 gripper
+    # Used for per-arm padding: [left_7, pad_9, right_7, pad_9] when action_dim=32
+    actual_arm_dim: int = 7
     
     # Task Decomposition settings (only used when dual_arm=True)
     # Enables VLM to automatically decompose unified prompt into left/right arm specific prompts
@@ -61,6 +64,18 @@ class Pi0Config(_model.BaseModelConfig):
     sticky_lambda: float = 0.01
     # Threshold for converting soft gate to hard 0/1 during inference
     gate_threshold: float = 0.5
+    
+    # Triple-VLM Architecture settings (only used when dual_arm=True)
+    # Enables the new architecture with:
+    # - 1 frozen Skill Selector VLM
+    # - 2 Per-Arm VLMs with LoRA (trainable)
+    # - 2 frozen Action Experts (no LoRA)
+    triple_vlm_enabled: bool = False
+    # Skill Selector VLM variant (should be non-LoRA, frozen)
+    skill_selector_variant: _gemma.Variant = "gemma_2b"
+    # Per-Arm VLM variant (should have LoRA for training)
+    per_arm_vlm_left_variant: _gemma.Variant = "gemma_2b_lora"
+    per_arm_vlm_right_variant: _gemma.Variant = "gemma_2b_lora"
 
     @property
     def half_action_dim(self) -> int:
@@ -188,6 +203,17 @@ class Pi0Config(_model.BaseModelConfig):
             filters.append(
                 nnx.Not(nnx_utils.PathRegex(".*task_decomposition.*")),
             )
+        
+        # Triple-VLM architecture: only Per-Arm VLM LoRA should be trained
+        # Skill Selector VLM and AEs are frozen
+        if self.triple_vlm_enabled and self.dual_arm:
+            # Freeze skill selector VLM
+            filters.append(nnx_utils.PathRegex(".*skill_selector.*"))
+            # Freeze action experts (no LoRA for AEs)
+            filters.append(nnx_utils.PathRegex(".*ae_left.*"))
+            filters.append(nnx_utils.PathRegex(".*ae_right.*"))
+            # Per-Arm VLM LoRA params will be excluded by the lora filter above
+            has_lora = True  # Per-Arm VLMs use LoRA
         
         if not filters:
             return nnx.Nothing

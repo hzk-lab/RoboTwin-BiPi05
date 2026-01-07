@@ -32,9 +32,14 @@ class PI0:
         self.checkpoint_id = checkpoint_id
 
         config = _config.get_config(self.train_config_name)
+        # 直接从当前项目的 pi05 checkpoints 目录加载对应任务的 checkpoint
+        ckpt_dir = (
+            f"/data0/users/haoce/pi0_checkpoints/"
+            f"{self.train_config_name}/{self.model_name}/{self.checkpoint_id}"
+        )
         self.policy = _policy_config.create_trained_policy(
             config,
-            f"policy/pi0/checkpoints/{self.train_config_name}/{self.model_name}/{self.checkpoint_id}",
+            ckpt_dir,
             )
         print("loading model success!")
         self.img_size = (224, 224)
@@ -74,6 +79,9 @@ class PI0:
 
     def get_action(self):
         assert self.observation_window is not None, "update observation_window first!"
+        # 打印上层 language prompt，便于检查实际送入模型的指令
+        prompt = self.observation_window.get("prompt", None)
+        print(f"[pi0.5] prompt used for inference: {prompt}")
         return self.policy.infer(self.observation_window)["actions"]
 
     def reset_obsrvationwindows(self):

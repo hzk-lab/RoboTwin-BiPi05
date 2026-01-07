@@ -1008,6 +1008,77 @@ _CONFIGS = [
         batch_size=32,
         fsdp_devices=8,
     ),
+    # Triple-VLM dual-arm architecture:
+    # - 1 frozen Skill Selector VLM
+    # - 2 Per-Arm VLMs with LoRA (trainable)
+    # - 2 frozen Action Experts (no LoRA)
+    # - Gate Network (trainable)
+    TrainConfig(
+        name="pi05_triple_vlm_dual_arm",
+        model=pi0_config.Pi0Config(
+            pi05=True,
+            dual_arm=True,
+            # Enable triple-VLM architecture
+            triple_vlm_enabled=True,
+            # Skill Selector VLM (frozen, no LoRA)
+            skill_selector_variant="gemma_2b",
+            # Per-Arm VLMs (LoRA trainable)
+            per_arm_vlm_left_variant="gemma_2b_lora",
+            per_arm_vlm_right_variant="gemma_2b_lora",
+            # Action Experts (frozen, no LoRA)
+            action_expert_variant="gemma_300m",
+            action_expert_left_variant="gemma_300m",
+            action_expert_right_variant="gemma_300m",
+            # Task decomposition settings
+            task_decomposition_enabled=True,
+            task_decomposition_num_queries=16,
+            task_decomposition_num_heads=8,
+            # PECA gate settings
+            peca_enabled=True,
+            peca_lambda=0.1,
+            gate_mlp_hidden=256,
+            l1_lambda=0.01,
+            sticky_lambda=0.01,
+            gate_threshold=0.5,
+            # VLM base (for Skill Selector)
+            paligemma_variant="gemma_2b",
+        ),
+        data=LeRobotAlohaDataConfig(
+            repo_id="demo_clean_repo",  # Replace with your dataset repo_id
+            adapt_to_pi=False,
+            repack_transforms=_transforms.Group(inputs=[
+                _transforms.RepackTransform({
+                    "images": {
+                        "cam_high": "observation.images.cam_high",
+                        "cam_left_wrist": "observation.images.cam_left_wrist",
+                        "cam_right_wrist": "observation.images.cam_right_wrist",
+                    },
+                    "state": "observation.state",
+                    "actions": "action",
+                    "prompt": "prompt",
+                })
+            ]),
+            base_config=DataConfig(
+                local_files_only=True,
+                prompt_from_task=True,
+            ),
+        ),
+        freeze_filter=pi0_config.Pi0Config(
+            pi05=True,
+            dual_arm=True,
+            triple_vlm_enabled=True,
+            peca_enabled=True,
+            skill_selector_variant="gemma_2b",
+            per_arm_vlm_left_variant="gemma_2b_lora",
+            per_arm_vlm_right_variant="gemma_2b_lora",
+            action_expert_variant="gemma_300m",
+            paligemma_variant="gemma_2b",
+        ).get_freeze_filter(),
+        weight_loader=weight_loaders.CheckpointWeightLoader("s3://openpi-assets/checkpoints/pi05_base/params"),
+        num_train_steps=30_000,
+        batch_size=16,  # Reduced batch size due to 3 VLMs
+        fsdp_devices=8,
+    ),
     #
     # RoboArena configs.
     #

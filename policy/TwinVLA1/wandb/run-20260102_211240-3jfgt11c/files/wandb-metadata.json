@@ -1,0 +1,90 @@
+{
+  "os":  "Linux-5.15.0-94-generic-x86_64-with-glibc2.35",
+  "python":  "CPython 3.11.14",
+  "startedAt":  "2026-01-02T13:12:40.628983Z",
+  "args":  [
+    "--config-name=pi0_base_aloha_robotwin_lora",
+    "--exp-name=shake_bottle-demo_clean-50",
+    "--arm=left",
+    "--overwrite"
+  ],
+  "program":  "/data0/users/haoce/RoboTwin/policy/TwinVLA1/scripts/train_dual_vla.py",
+  "codePath":  "policy/TwinVLA1/scripts/train_dual_vla.py",
+  "git":  {
+    "remote":  "https://github.com/RoboTwin-Platform/RoboTwin.git",
+    "commit":  "b24d12a171c01749ffeffe8bdaade1b317e26a50"
+  },
+  "email":  "leonhuangzk@gmail.com",
+  "root":  "/data0/users/haoce/RoboTwin/policy/TwinVLA1",
+  "host":  "pm-ca960002",
+  "executable":  "/data0/users/haoce/RoboTwin/policy/pi0/.venv/bin/python",
+  "codePathLocal":  "scripts/train_dual_vla.py",
+  "cpu_count":  64,
+  "cpu_count_logical":  128,
+  "gpu":  "NVIDIA A800-SXM4-40GB",
+  "gpu_count":  8,
+  "disk":  {
+    "/":  {
+      "total":  "107321753600",
+      "used":  "70561521664"
+    }
+  },
+  "memory":  {
+    "total":  "1081259921408"
+  },
+  "cpu":  {
+    "count":  64,
+    "countLogical":  128
+  },
+  "gpu_nvidia":  [
+    {
+      "name":  "NVIDIA A800-SXM4-40GB",
+      "memoryTotal":  "42949672960",
+      "cudaCores":  6912,
+      "architecture":  "Ampere"
+    },
+    {
+      "name":  "NVIDIA A800-SXM4-40GB",
+      "memoryTotal":  "42949672960",
+      "cudaCores":  6912,
+      "architecture":  "Ampere"
+    },
+    {
+      "name":  "NVIDIA A800-SXM4-40GB",
+      "memoryTotal":  "42949672960",
+      "cudaCores":  6912,
+      "architecture":  "Ampere"
+    },
+    {
+      "name":  "NVIDIA A800-SXM4-40GB",
+      "memoryTotal":  "42949672960",
+      "cudaCores":  6912,
+      "architecture":  "Ampere"
+    },
+    {
+      "name":  "NVIDIA A800-SXM4-40GB",
+      "memoryTotal":  "42949672960",
+      "cudaCores":  6912,
+      "architecture":  "Ampere"
+    },
+    {
+      "name":  "NVIDIA A800-SXM4-40GB",
+      "memoryTotal":  "42949672960",
+      "cudaCores":  6912,
+      "architecture":  "Ampere"
+    },
+    {
+      "name":  "NVIDIA A800-SXM4-40GB",
+      "memoryTotal":  "42949672960",
+      "cudaCores":  6912,
+      "architecture":  "Ampere"
+    },
+    {
+      "name":  "NVIDIA A800-SXM4-40GB",
+      "memoryTotal":  "42949672960",
+      "cudaCores":  6912,
+      "architecture":  "Ampere"
+    }
+  ],
+  "cudaVersion":  "12.8"
+}

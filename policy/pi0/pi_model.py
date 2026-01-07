@@ -4,7 +4,11 @@
 #!/usr/bin/python3
 """
 import json
+import os
 import sys
+# 优先使用当前策略目录下的本地 openpi 代码，避免导入到系统已安装的旧版本
+sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
+
 import jax
 import numpy as np
 from openpi.models import model as _model
@@ -32,9 +36,13 @@ class PI0:
         self.checkpoint_id = checkpoint_id
 
         config = _config.get_config(self.train_config_name)
+        # checkpoint 位置：
+        # data0 本地检查点结构示例：
+        # /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50/15000
+        ckpt_dir = f"/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/{self.train_config_name}/shake_bottle-demo_clean-50/{self.checkpoint_id}"
         self.policy = _policy_config.create_trained_policy(
             config,
-            f"/data1/users/haoce/pi0_checkpoints/{self.train_config_name}/{self.model_name}/{self.checkpoint_id}",
+            ckpt_dir,
             robotwin_repo_id=model_name)
         print("loading model success!")
         self.img_size = (224, 224)

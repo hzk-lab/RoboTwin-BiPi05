@@ -1,0 +1,28 @@
+# TwinVLA1 Deploy Policy Configuration
+# 双VLA + Joint Attention 模型配置
+
+# Basic experiment configuration (keep unchanged)
+policy_name: null
+task_name: null
+task_config: null
+ckpt_setting: null
+seed: null
+instruction_type: unseen
+
+# OpenPi 训练配置名称
+train_config_name: pi0_base_aloha_robotwin_lora
+
+# 左臂模型配置
+left_model_name: shake_bottle-demo_clean-50_left
+left_checkpoint_id: 15000
+
+# 右臂模型配置 (可以与左臂相同或不同)
+right_model_name: shake_bottle-demo_clean-50_right
+right_checkpoint_id: 15000
+
+# 每次推理输出的动作步数
+pi0_step: 8
+
+# 可选: 直接指定 checkpoint 路径 (会覆盖上面的配置)
+# left_checkpoint_dir: /data0/users/haoce/RoboTwin/policy/TwinVLA1/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_left/15000
+# right_checkpoint_dir: /data0/users/haoce/RoboTwin/policy/TwinVLA1/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50_right/15000

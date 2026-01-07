@@ -1,0 +1,31 @@
+{"time":"2026-01-02T21:14:57.469341668+08:00","level":"INFO","msg":"using version","core version":"0.19.1"}
+{"time":"2026-01-02T21:14:57.469350174+08:00","level":"INFO","msg":"created symlink","path":"/data0/users/haoce/RoboTwin/policy/TwinVLA1/wandb/run-20260102_211457-hly0yywn/logs/debug-core.log"}
+{"time":"2026-01-02T21:14:57.578170812+08:00","level":"INFO","msg":"created new stream","id":"hly0yywn"}
+{"time":"2026-01-02T21:14:57.578196661+08:00","level":"INFO","msg":"stream: started","id":"hly0yywn"}
+{"time":"2026-01-02T21:14:57.578209151+08:00","level":"INFO","msg":"handler: started","stream_id":"hly0yywn"}
+{"time":"2026-01-02T21:14:57.578211011+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"hly0yywn"}
+{"time":"2026-01-02T21:14:57.578215106+08:00","level":"INFO","msg":"sender: started","stream_id":"hly0yywn"}
+{"time":"2026-01-02T21:14:58.294386091+08:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-01-02T21:33:47.359684403+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-02T21:46:02.29189165+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-02T21:47:00.03614263+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-02T21:47:32.285467087+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-02T21:50:18.376999753+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-02T21:55:02.292018302+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-02T22:10:32.259795494+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-02T22:24:30.480526891+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-02T23:37:32.266536237+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-02T23:49:14.89346478+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-02T23:51:14.885179685+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-03T01:00:32.353128392+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-03T02:09:34.174562248+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-03T02:21:32.256289295+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-03T03:05:32.263086377+08:00","level":"INFO","msg":"api: retrying error","error":"Post \"https://api.wandb.ai/files/leonhuangzk-shanghai-ai-lab/openpi/hly0yywn/file_stream\": EOF"}
+{"time":"2026-01-03T05:00:53.411392555+08:00","level":"INFO","msg":"stream: closing","id":"hly0yywn"}
+{"time":"2026-01-03T05:00:53.411436697+08:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-01-03T05:00:53.411923289+08:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-01-03T05:00:54.921921404+08:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-01-03T05:00:55.650615692+08:00","level":"INFO","msg":"handler: closed","stream_id":"hly0yywn"}
+{"time":"2026-01-03T05:00:55.65066811+08:00","level":"INFO","msg":"sender: closed","stream_id":"hly0yywn"}
+{"time":"2026-01-03T05:00:55.650654874+08:00","level":"INFO","msg":"writer: Close: closed","stream_id":"hly0yywn"}
+{"time":"2026-01-03T05:00:55.650839462+08:00","level":"INFO","msg":"stream: closed","id":"hly0yywn"}

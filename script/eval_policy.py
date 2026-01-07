@@ -159,6 +159,7 @@ def main(usr_args):
 
     st_seed = 100000 * (1 + seed)
     suc_nums = []
+    # 每个进程评测的 episode 数量（可从配置中读取）
     test_num = 100
     topk = 1
 

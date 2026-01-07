@@ -1,0 +1,16 @@
+{"time":"2026-01-02T21:12:40.629707772+08:00","level":"INFO","msg":"using version","core version":"0.19.1"}
+{"time":"2026-01-02T21:12:40.629716978+08:00","level":"INFO","msg":"created symlink","path":"/data0/users/haoce/RoboTwin/policy/TwinVLA1/wandb/run-20260102_211240-3jfgt11c/logs/debug-core.log"}
+{"time":"2026-01-02T21:12:40.737553063+08:00","level":"INFO","msg":"created new stream","id":"3jfgt11c"}
+{"time":"2026-01-02T21:12:40.737579329+08:00","level":"INFO","msg":"stream: started","id":"3jfgt11c"}
+{"time":"2026-01-02T21:12:40.737590381+08:00","level":"INFO","msg":"writer: Do: started","stream_id":"3jfgt11c"}
+{"time":"2026-01-02T21:12:40.737592888+08:00","level":"INFO","msg":"sender: started","stream_id":"3jfgt11c"}
+{"time":"2026-01-02T21:12:40.737597272+08:00","level":"INFO","msg":"handler: started","stream_id":"3jfgt11c"}
+{"time":"2026-01-02T21:12:41.43635757+08:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-01-02T21:13:22.56769939+08:00","level":"INFO","msg":"stream: closing","id":"3jfgt11c"}
+{"time":"2026-01-02T21:13:22.567729892+08:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-01-02T21:13:22.568232206+08:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-01-02T21:13:23.847618116+08:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-01-02T21:13:24.547013847+08:00","level":"INFO","msg":"handler: closed","stream_id":"3jfgt11c"}
+{"time":"2026-01-02T21:13:24.54703273+08:00","level":"INFO","msg":"sender: closed","stream_id":"3jfgt11c"}
+{"time":"2026-01-02T21:13:24.547030751+08:00","level":"INFO","msg":"writer: Close: closed","stream_id":"3jfgt11c"}
+{"time":"2026-01-02T21:13:24.547103584+08:00","level":"INFO","msg":"stream: closed","id":"3jfgt11c"}

@@ -326,14 +326,47 @@ class PromptFromLeRobotTask(DataTransformFn):
 
 @dataclasses.dataclass(frozen=True)
 class PadStatesAndActions(DataTransformFn):
-    """Zero-pads states and actions to the model action dimension."""
+    """Zero-pads states and actions to the model action dimension with per-arm padding.
+    
+    For dual-arm setups, this pads each arm separately:
+    [left_7, right_7] → [left_7, pad_9, right_7, pad_9] (for 32 dim total)
+    
+    This ensures that when split at half_action_dim (16), each half contains
+    the correct arm's data plus padding, not mixed data.
+    """
 
     model_action_dim: int
+    actual_arm_dim: int = 7  # 每臂实际动作维度
+    dual_arm_padding: bool = True  # 是否使用分段 padding（双臂模式）
 
     def __call__(self, data: DataDict) -> DataDict:
-        data["state"] = pad_to_dim(data["state"], self.model_action_dim, axis=-1)
-        if "actions" in data:
-            data["actions"] = pad_to_dim(data["actions"], self.model_action_dim, axis=-1)
+        if self.dual_arm_padding:
+            half_model_dim = self.model_action_dim // 2  # 16
+            
+            # State: [left_7, right_7] → [left_7, pad_9, right_7, pad_9]
+            state = data["state"]
+            left_state = state[..., :self.actual_arm_dim]
+            right_state = state[..., self.actual_arm_dim:2*self.actual_arm_dim]
+            
+            left_padded = pad_to_dim(left_state, half_model_dim, axis=-1)
+            right_padded = pad_to_dim(right_state, half_model_dim, axis=-1)
+            data["state"] = np.concatenate([left_padded, right_padded], axis=-1)
+            
+            # Actions: same treatment
+            if "actions" in data:
+                actions = data["actions"]
+                left_actions = actions[..., :self.actual_arm_dim]
+                right_actions = actions[..., self.actual_arm_dim:2*self.actual_arm_dim]
+                
+                left_padded = pad_to_dim(left_actions, half_model_dim, axis=-1)
+                right_padded = pad_to_dim(right_actions, half_model_dim, axis=-1)
+                data["actions"] = np.concatenate([left_padded, right_padded], axis=-1)
+        else:
+            # Legacy: simple padding to the end
+            data["state"] = pad_to_dim(data["state"], self.model_action_dim, axis=-1)
+            if "actions" in data:
+                data["actions"] = pad_to_dim(data["actions"], self.model_action_dim, axis=-1)
+        
         return data
 
 
