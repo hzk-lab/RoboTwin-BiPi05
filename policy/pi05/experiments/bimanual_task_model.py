@@ -915,6 +915,7 @@ class PaliGemmaBackend(BimanualBackend):
         self,
         checkpoint_path: Optional[str] = None,
         use_pretrained: bool = False,
+        cache_dir: Optional[str] = None,
     ):
         """
         初始化 PaliGemma 后端
@@ -922,7 +923,15 @@ class PaliGemmaBackend(BimanualBackend):
         Args:
             checkpoint_path: 检查点路径
             use_pretrained: 是否使用预训练模型
+            cache_dir: 缓存目录路径，默认为 ~/openpi_cache
         """
+        # 设置缓存目录到用户主目录，避免权限问题
+        if cache_dir is None:
+            cache_dir = os.path.expanduser("~/openpi_cache")
+        os.environ["OPENPI_DATA_HOME"] = cache_dir
+        os.makedirs(cache_dir, exist_ok=True)
+        logger.info(f"缓存目录设置为: {cache_dir}")
+        
         # 延迟导入以避免不必要的依赖
         import jax
         import jax.numpy as jnp
@@ -1293,6 +1302,7 @@ class Pi05TextGenerativeBackend(BimanualBackend):
         checkpoint_path: Optional[str] = None,
         use_pretrained: bool = True,
         max_new_tokens: int = 64,
+        cache_dir: Optional[str] = None,
     ):
         """
         初始化 Pi0.5 文本生成后端
@@ -1301,7 +1311,15 @@ class Pi05TextGenerativeBackend(BimanualBackend):
             checkpoint_path: Pi0.5 检查点路径
             use_pretrained: 是否使用预训练模型
             max_new_tokens: 最大生成 token 数
+            cache_dir: 缓存目录路径，默认为 ~/openpi_cache
         """
+        # 设置缓存目录到用户主目录，避免权限问题
+        if cache_dir is None:
+            cache_dir = os.path.expanduser("~/openpi_cache")
+        os.environ["OPENPI_DATA_HOME"] = cache_dir
+        os.makedirs(cache_dir, exist_ok=True)
+        logger.info(f"缓存目录设置为: {cache_dir}")
+        
         import jax
         import jax.numpy as jnp
         import sentencepiece
@@ -2069,6 +2087,7 @@ class BimanualTaskModel:
         use_pretrained: bool = False,
         api_key: Optional[str] = None,
         api_provider: str = "openai",
+        cache_dir: Optional[str] = None,
     ):
         """
         初始化双臂任务模型
@@ -2085,6 +2104,7 @@ class BimanualTaskModel:
             use_pretrained: 是否使用预训练模型（paligemma/pi05_gen 模式）
             api_key: API Key（api 模式）
             api_provider: API 提供商（api 模式）
+            cache_dir: 缓存目录路径，默认为 ~/openpi_cache
         """
         if mode not in self.SUPPORTED_MODES:
             raise ValueError(f"不支持的模式: {mode}, 支持: {self.SUPPORTED_MODES}")
@@ -2099,11 +2119,13 @@ class BimanualTaskModel:
             self.backend = PaliGemmaBackend(
                 checkpoint_path=checkpoint_path,
                 use_pretrained=use_pretrained,
+                cache_dir=cache_dir,
             )
         elif mode == "pi05_gen":
             self.backend = Pi05TextGenerativeBackend(
                 checkpoint_path=checkpoint_path,
                 use_pretrained=use_pretrained,
+                cache_dir=cache_dir,
             )
         elif mode == "paligemma_gen":
             self.backend = PaliGemmaGenerativeBackend()
@@ -2353,6 +2375,10 @@ def main():
         "--api-key", type=str, default=None,
         help="API Key (api 模式)"
     )
+    parser.add_argument(
+        "--cache-dir", type=str, default=None,
+        help="缓存目录路径，默认为 ~/openpi_cache（避免权限问题）"
+    )
     
     # 图像输入参数（支持多图像）
     parser.add_argument(
@@ -2399,6 +2425,7 @@ def main():
         checkpoint_path=args.checkpoint,
         use_pretrained=args.use_pretrained,
         api_key=args.api_key,
+        cache_dir=args.cache_dir,
     )
     
     # 加载图像（支持多图像输入）
