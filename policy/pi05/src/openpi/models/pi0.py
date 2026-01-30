@@ -277,3 +277,106 @@ class Pi0(_model.BaseModel):
 
         x_0, _ = jax.lax.while_loop(cond, step, (noise, 1.0))
         return x_0
+
+    def generate_text(
+        self,
+        observation: _model.Observation,
+        max_new_tokens: int = 64,
+        temperature: float = 1.0,
+        top_k: int | None = None,
+    ) -> tuple[jnp.ndarray, str]:
+        """
+        使用 PaliGemma 进行自回归文本生成。
+        
+        Args:
+            observation: 包含图像和 tokenized_prompt 的观测
+            max_new_tokens: 最大生成 token 数
+            temperature: 采样温度 (1.0 = 正常, <1 更确定, >1 更随机)
+            top_k: 如果设置，只从 top-k 概率的 token 中采样
+            
+        Returns:
+            (generated_token_ids, decoded_text) 元组
+        """
+        observation = _model.preprocess_observation(None, observation, train=False)
+        
+        # 1. 嵌入 prefix (图像 + prompt)
+        prefix_tokens, prefix_mask, prefix_ar_mask = self.embed_prefix(observation)
+        
+        # 2. 前向传播获取输出
+        prefix_attn_mask = make_attn_mask(prefix_mask, prefix_ar_mask)
+        positions = jnp.cumsum(prefix_mask, axis=1) - 1
+        
+        # 只用第一个 expert (PaliGemma)，不用 action expert
+        (prefix_out, _), kv_cache = self.PaliGemma.llm(
+            [prefix_tokens, None], 
+            mask=prefix_attn_mask, 
+            positions=positions
+        )
+        
+        # 3. 获取 embedder 用于 decode
+        # 注意：需要访问底层 Linen 模块的 embedder
+        llm_module = self.PaliGemma.llm.module
+        
+        # 4. 自回归生成
+        batch_size = prefix_tokens.shape[0]
+        generated_tokens = []
+        
+        # 获取最后一个 token 的输出
+        last_hidden = prefix_out[:, -1:, :]  # [b, 1, d]
+        
+        # Decode 到 logits
+        logits = llm_module.embedder.decode(last_hidden)  # [b, 1, vocab_size]
+        
+        for step_idx in range(max_new_tokens):
+            # 应用温度
+            if temperature != 1.0:
+                logits = logits / temperature
+            
+            # 可选 top-k 采样
+            if top_k is not None:
+                # 获取 top-k 值和索引
+                top_k_logits, top_k_indices = jax.lax.top_k(logits[:, -1, :], top_k)
+                # 创建 mask
+                mask = jnp.full(logits.shape[-1], float('-inf'))
+                mask = mask.at[top_k_indices[0]].set(0)
+                logits = logits + mask[None, None, :]
+            
+            # 取 argmax (greedy decoding) 或 sample
+            probs = jax.nn.softmax(logits[:, -1, :], axis=-1)
+            next_token = jnp.argmax(probs, axis=-1)  # [b]
+            
+            generated_tokens.append(next_token)
+            
+            # 检查 EOS (token id = 1 for PaliGemma)
+            if next_token[0] == 1:
+                break
+            
+            # 嵌入新 token
+            next_token_emb = llm_module.embedder.encode(next_token[:, None])  # [b, 1, d]
+            next_token_emb = next_token_emb.astype(prefix_tokens.dtype)
+            
+            # 更新 position
+            current_pos = positions[:, -1:] + 1
+            
+            # 构建新的 attention mask (可以 attend 所有之前的 token)
+            seq_len = prefix_tokens.shape[1] + step_idx + 1
+            new_mask = jnp.ones((batch_size, 1, seq_len), dtype=jnp.bool_)
+            
+            # Forward pass with KV cache
+            (new_out, _), kv_cache = self.PaliGemma.llm(
+                [next_token_emb, None],
+                mask=new_mask,
+                positions=current_pos,
+                kv_cache=kv_cache,
+            )
+            
+            # 更新 positions
+            positions = jnp.concatenate([positions, current_pos], axis=1)
+            
+            # Decode 新的 hidden state 到 logits
+            logits = llm_module.embedder.decode(new_out)
+        
+        # 5. 将生成的 token IDs 转换为数组
+        generated_ids = jnp.stack(generated_tokens, axis=1) if generated_tokens else jnp.array([[]])
+        
+        return generated_ids
