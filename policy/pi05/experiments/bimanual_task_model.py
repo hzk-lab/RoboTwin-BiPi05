@@ -1591,11 +1591,12 @@ class PaliGemmaGenerativeBackend(BimanualBackend):
         - google/paligemma-3b-pt-224: 3B 参数，224x224 输入
         - google/paligemma-3b-pt-448: 3B 参数，448x448 输入
         - google/paligemma-3b-mix-224: 3B 参数，多任务混合训练
+        - 或者本地路径: ./paligemma_model
     """
     
     def __init__(
         self,
-        model_name: str = "google/paligemma-3b-pt-224",
+        model_name_or_path: str = "google/paligemma-3b-pt-224",
         device: str = "auto",
         torch_dtype: str = "auto",
         max_new_tokens: int = 128,
@@ -1604,12 +1605,12 @@ class PaliGemmaGenerativeBackend(BimanualBackend):
         初始化 PaliGemma 生成式后端
         
         Args:
-            model_name: HuggingFace 模型名称
+            model_name_or_path: HuggingFace 模型名称或本地路径
             device: 设备 ("auto", "cuda", "cpu")
             torch_dtype: 数据类型 ("auto", "float16", "bfloat16", "float32")
             max_new_tokens: 最大生成 token 数
         """
-        self.model_name = model_name
+        self.model_name_or_path = model_name_or_path
         self.device = device
         self.torch_dtype = torch_dtype
         self.max_new_tokens = max_new_tokens
@@ -1618,7 +1619,7 @@ class PaliGemmaGenerativeBackend(BimanualBackend):
         self._processor = None
         self._rule_backend = RuleBasedBackend()
         
-        logger.info(f"PaliGemma 生成式后端初始化, 模型: {model_name}")
+        logger.info(f"PaliGemma 生成式后端初始化, 模型: {model_name_or_path}")
         logger.info("提示: 模型将在首次调用时懒加载")
     
     def _load_model(self):
@@ -1630,7 +1631,12 @@ class PaliGemmaGenerativeBackend(BimanualBackend):
             import torch
             from transformers import AutoProcessor, PaliGemmaForConditionalGeneration
             
-            logger.info(f"正在加载 PaliGemma 模型: {self.model_name}")
+            logger.info(f"正在加载 PaliGemma 模型: {self.model_name_or_path}")
+            
+            # 检查是否是本地路径
+            is_local = os.path.exists(self.model_name_or_path)
+            if is_local:
+                logger.info(f"使用本地模型路径: {self.model_name_or_path}")
             
             # 确定数据类型
             if self.torch_dtype == "auto":
@@ -1648,12 +1654,17 @@ class PaliGemmaGenerativeBackend(BimanualBackend):
             else:
                 device = self.device
             
-            # 加载 processor 和 model
-            self._processor = AutoProcessor.from_pretrained(self.model_name)
+            # 加载 processor 和 model（优先使用本地文件）
+            self._processor = AutoProcessor.from_pretrained(
+                self.model_name_or_path,
+                local_files_only=is_local,
+                use_fast=False,  # 避免 fast processor 警告
+            )
             self._model = PaliGemmaForConditionalGeneration.from_pretrained(
-                self.model_name,
+                self.model_name_or_path,
                 torch_dtype=dtype,
                 device_map=device if device == "auto" else None,
+                local_files_only=is_local,
             )
             
             if device != "auto":
@@ -1667,6 +1678,8 @@ class PaliGemmaGenerativeBackend(BimanualBackend):
         except ImportError as e:
             logger.error(f"缺少依赖: {e}")
             logger.error("请安装: pip install transformers torch accelerate")
+            logger.error("注意: 需要 PyTorch >= 2.2，当前版本可能太低")
+            logger.error("升级命令: pip install torch>=2.2 --upgrade")
             raise
         except Exception as e:
             logger.error(f"加载模型失败: {e}")
@@ -2128,7 +2141,9 @@ class BimanualTaskModel:
                 cache_dir=cache_dir,
             )
         elif mode == "paligemma_gen":
-            self.backend = PaliGemmaGenerativeBackend()
+            self.backend = PaliGemmaGenerativeBackend(
+                model_name_or_path=checkpoint_path or "google/paligemma-3b-pt-224",
+            )
         elif mode == "api":
             self.backend = APIBackend(
                 api_key=api_key,
