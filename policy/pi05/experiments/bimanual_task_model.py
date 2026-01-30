@@ -1272,6 +1272,549 @@ class PaliGemmaBackend(BimanualBackend):
 
 
 # =============================================================================
+# Pi0.5 原版文本生成后端 (使用 Pi0.5 的 Gemma decoder 直接生成自然语言)
+# =============================================================================
+
+class Pi05TextGenerativeBackend(BimanualBackend):
+    """
+    使用 Pi0.5 原版的 PaliGemma 架构进行文本生成
+    
+    这个后端利用 Pi0.5 的:
+    - SigLIP 图像编码器 (提取视觉特征)
+    - Gemma LLM decoder (生成 token)
+    - PaliGemma tokenizer (decode 成自然语言)
+    
+    注意: Pi0.5 的权重是为动作预测 fine-tune 的，文本生成效果可能有限。
+    如果生成失败，会自动回退到规则方法。
+    """
+    
+    def __init__(
+        self,
+        checkpoint_path: Optional[str] = None,
+        use_pretrained: bool = True,
+        max_new_tokens: int = 64,
+    ):
+        """
+        初始化 Pi0.5 文本生成后端
+        
+        Args:
+            checkpoint_path: Pi0.5 检查点路径
+            use_pretrained: 是否使用预训练模型
+            max_new_tokens: 最大生成 token 数
+        """
+        import jax
+        import jax.numpy as jnp
+        import sentencepiece
+        import flax.nnx as nnx
+        import flax.nnx.bridge as nnx_bridge
+        from openpi.models import model as _model
+        from openpi.models import pi0_config
+        import openpi.models.gemma as _gemma
+        import openpi.models.siglip as _siglip
+        from openpi.shared import download
+        
+        self.jax = jax
+        self.jnp = jnp
+        self.max_new_tokens = max_new_tokens
+        
+        # 预训练模型 URL
+        PRETRAINED_MODELS = {
+            "pi05_base": "s3://openpi-assets/checkpoints/pi05_base/params",
+        }
+        
+        # 获取检查点
+        if use_pretrained:
+            pretrained_url = PRETRAINED_MODELS.get("pi05_base")
+            logger.info(f"下载预训练模型: {pretrained_url}")
+            checkpoint_path = download.maybe_download(pretrained_url)
+        
+        self.checkpoint_path = checkpoint_path
+        
+        # 加载 tokenizer (完整的 PaliGemma tokenizer，支持自然语言)
+        logger.info("加载 PaliGemma tokenizer...")
+        tokenizer_path = download.maybe_download(
+            "gs://big_vision/paligemma_tokenizer.model",
+            gs={"token": "anon"}
+        )
+        with tokenizer_path.open("rb") as f:
+            self._tokenizer = sentencepiece.SentencePieceProcessor(model_proto=f.read())
+        
+        # 记录词表大小
+        self._vocab_size = self._tokenizer.vocab_size()
+        logger.info(f"Tokenizer 词表大小: {self._vocab_size}")
+        
+        # 加载模型配置
+        logger.info("加载 Pi0.5 VLM 模型...")
+        config = pi0_config.Pi0Config(pi05=True)
+        paligemma_config = _gemma.get_config(config.paligemma_variant)
+        
+        rngs = nnx.Rngs(jax.random.key(0))
+        
+        # 加载 LLM
+        self.llm = nnx_bridge.ToNNX(
+            _gemma.Module(
+                configs=[paligemma_config],
+                embed_dtype=config.dtype,
+                adarms=False,
+            )
+        )
+        self.llm.lazy_init(rngs=rngs, method="init", use_adarms=[False])
+        
+        # 加载图像编码器
+        self.img_encoder = nnx_bridge.ToNNX(
+            _siglip.Module(
+                num_classes=paligemma_config.width,
+                variant="So400m/14",
+                pool_type="none",
+                scan=True,
+                dtype_mm=config.dtype,
+            )
+        )
+        fake_image = jnp.ones((1, 224, 224, 3), dtype=jnp.float32)
+        self.img_encoder.lazy_init(fake_image, train=False, rngs=rngs)
+        
+        # 加载权重
+        self._params = None
+        if self.checkpoint_path:
+            logger.info(f"从 {self.checkpoint_path} 加载权重...")
+            self._params = _model.restore_params(self.checkpoint_path)
+            if 'PaliGemma' in self._params:
+                logger.info("已加载 PaliGemma 权重")
+        
+        self.config = config
+        self.paligemma_config = paligemma_config
+        self._gemma = _gemma
+        self._model = _model
+        
+        # 规则后端作为后备
+        self._rule_backend = RuleBasedBackend()
+        
+        # EOS token
+        self._eos_token = self._tokenizer.eos_id()
+        
+        logger.info("Pi0.5 文本生成后端加载完成!")
+    
+    def _preprocess_image(self, image: np.ndarray):
+        """预处理图像为 JAX 张量"""
+        if image.dtype == np.uint8:
+            image = image.astype(np.float32) / 255.0
+        
+        if image.shape[:2] != (224, 224):
+            pil_image = Image.fromarray((image * 255).astype(np.uint8))
+            pil_image = pil_image.resize((224, 224), Image.BILINEAR)
+            image = np.array(pil_image).astype(np.float32) / 255.0
+        
+        # 归一化到 [-1, 1]
+        image = image * 2.0 - 1.0
+        image = image[np.newaxis, ...]
+        
+        return self.jnp.array(image)
+    
+    def _generate_text(self, images: Dict[str, np.ndarray], prompt: str) -> str:
+        """
+        使用 Pi0.5 的 Gemma decoder 生成文本
+        
+        注意: 由于 Pi0.5 是为动作预测 fine-tune 的，生成效果可能有限
+        """
+        # 编码图像
+        base_image = images.get("base_rgb", list(images.values())[0])
+        image_tensor = self._preprocess_image(base_image)
+        image_tokens, _ = self.img_encoder(image_tensor, train=False)
+        
+        # 编码文本 prompt
+        text_tokens = self._tokenizer.encode(prompt, add_bos=True)
+        text_tokens = self.jnp.array([text_tokens])
+        
+        # 获取文本 embedding
+        text_embedding = self.llm(text_tokens, embed_only=True)
+        
+        # 将图像 token 和文本 embedding 连接
+        # 图像 token 需要通过投影层
+        combined_embedding = self.jnp.concatenate([image_tokens, text_embedding], axis=1)
+        
+        # 自回归生成
+        generated_tokens = []
+        current_embedding = combined_embedding
+        
+        for _ in range(self.max_new_tokens):
+            # 前向传播获取 logits
+            logits, _, _ = self.llm(embedded_prefix=current_embedding, decode=False)
+            
+            # 获取最后一个位置的 logits
+            last_logits = logits[0, -1, :]
+            
+            # 只考虑自然语言词表范围内的 token（排除动作 token）
+            # 动作 token 在词表末尾，我们限制在前 250000 个 token
+            natural_lang_logits = last_logits[:250000]
+            
+            # 贪婪解码
+            next_token = int(self.jnp.argmax(natural_lang_logits))
+            
+            # 检查 EOS
+            if next_token == self._eos_token:
+                break
+            
+            generated_tokens.append(next_token)
+            
+            # 更新 embedding
+            next_token_array = self.jnp.array([[next_token]])
+            next_embedding = self.llm(next_token_array, embed_only=True)
+            current_embedding = self.jnp.concatenate([current_embedding, next_embedding], axis=1)
+        
+        # 解码生成的 token
+        if generated_tokens:
+            generated_text = self._tokenizer.decode(generated_tokens)
+        else:
+            generated_text = ""
+        
+        return generated_text
+    
+    def generate_bimanual_prompts(
+        self,
+        images: Dict[str, np.ndarray],
+        instruction: str,
+    ) -> BimanualPromptResult:
+        """使用 Pi0.5 尝试生成双臂 prompt"""
+        num_images = len(images)
+        
+        # 构建 prompt (不使用 Action: 格式)
+        prompt = f"Task: {instruction}\nDecompose into left and right arm subtasks:\nLeft Arm:"
+        
+        try:
+            generated_text = self._generate_text(images, prompt)
+            logger.info(f"Pi0.5 生成的文本: {generated_text}")
+            
+            # 解析生成的文本
+            left_prompt = ""
+            right_prompt = ""
+            
+            # 尝试解析 "Left Arm: ... Right Arm: ..." 格式
+            if "Right Arm:" in generated_text or "Right arm:" in generated_text:
+                parts = re.split(r'[Rr]ight\s*[Aa]rm[:\s]+', generated_text, maxsplit=1)
+                if len(parts) >= 1:
+                    left_prompt = parts[0].strip().rstrip(',').rstrip('.')
+                if len(parts) >= 2:
+                    right_prompt = parts[1].strip().split('\n')[0].strip()
+            else:
+                left_prompt = generated_text.strip()
+            
+            # 如果解析失败或生成内容为空，使用规则后端
+            if not left_prompt or not right_prompt or len(left_prompt) < 3:
+                logger.warning("Pi0.5 生成结果不理想，使用规则后端补充")
+                fallback_result = self._rule_backend.generate_bimanual_prompts(images, instruction)
+                if not left_prompt or len(left_prompt) < 3:
+                    left_prompt = fallback_result.left_arm_prompt
+                if not right_prompt or len(right_prompt) < 3:
+                    right_prompt = fallback_result.right_arm_prompt
+            
+            return BimanualPromptResult(
+                left_arm_prompt=left_prompt,
+                right_arm_prompt=right_prompt,
+                raw_output=f"[Pi0.5 Text Generation] (images: {num_images})\n"
+                          f"Prompt: {prompt}\n"
+                          f"Generated: {generated_text}",
+            )
+            
+        except Exception as e:
+            logger.error(f"Pi0.5 文本生成失败: {e}, 使用规则后端")
+            return self._rule_backend.generate_bimanual_prompts(images, instruction)
+    
+    def evaluate_cooperation(
+        self,
+        images: Dict[str, np.ndarray],
+        instruction: str,
+    ) -> CooperationResult:
+        """使用 Pi0.5 尝试评估协调度"""
+        num_images = len(images)
+        
+        # 构建 prompt
+        prompt = f"Task: {instruction}\nRate cooperation level between two arms (0.0 to 1.0):\nScore:"
+        
+        try:
+            generated_text = self._generate_text(images, prompt)
+            logger.info(f"Pi0.5 生成的评估: {generated_text}")
+            
+            # 解析分数
+            score_match = re.search(r'(\d+\.?\d*)', generated_text)
+            
+            if score_match:
+                score = float(score_match.group(1))
+                score = max(0.0, min(1.0, score))
+            else:
+                # 回退到规则方法
+                rule_result = self._rule_backend.evaluate_cooperation(images, instruction)
+                score = rule_result.cooperation_score
+            
+            return CooperationResult(
+                cooperation_score=round(score, 4),
+                explanation=f"Pi0.5 generated: {generated_text}",
+                raw_output=f"[Pi0.5 Text Generation] (images: {num_images})\n"
+                          f"Prompt: {prompt}\n"
+                          f"Generated: {generated_text}",
+            )
+            
+        except Exception as e:
+            logger.error(f"Pi0.5 评估失败: {e}, 使用规则后端")
+            return self._rule_backend.evaluate_cooperation(images, instruction)
+
+
+# =============================================================================
+# PaliGemma 生成式后端 (使用 HuggingFace transformers 真正生成自然语言)
+# =============================================================================
+
+class PaliGemmaGenerativeBackend(BimanualBackend):
+    """
+    使用 HuggingFace transformers 的原版 PaliGemma 进行真正的自然语言生成
+    
+    与 PaliGemmaBackend 不同，这个后端使用 Google 发布的原版 PaliGemma，
+    能够真正生成自然语言文本，而不是依赖规则模板。
+    
+    支持的模型:
+        - google/paligemma-3b-pt-224: 3B 参数，224x224 输入
+        - google/paligemma-3b-pt-448: 3B 参数，448x448 输入
+        - google/paligemma-3b-mix-224: 3B 参数，多任务混合训练
+    """
+    
+    def __init__(
+        self,
+        model_name: str = "google/paligemma-3b-pt-224",
+        device: str = "auto",
+        torch_dtype: str = "auto",
+        max_new_tokens: int = 128,
+    ):
+        """
+        初始化 PaliGemma 生成式后端
+        
+        Args:
+            model_name: HuggingFace 模型名称
+            device: 设备 ("auto", "cuda", "cpu")
+            torch_dtype: 数据类型 ("auto", "float16", "bfloat16", "float32")
+            max_new_tokens: 最大生成 token 数
+        """
+        self.model_name = model_name
+        self.device = device
+        self.torch_dtype = torch_dtype
+        self.max_new_tokens = max_new_tokens
+        
+        self._model = None
+        self._processor = None
+        self._rule_backend = RuleBasedBackend()
+        
+        logger.info(f"PaliGemma 生成式后端初始化, 模型: {model_name}")
+        logger.info("提示: 模型将在首次调用时懒加载")
+    
+    def _load_model(self):
+        """懒加载模型"""
+        if self._model is not None:
+            return
+        
+        try:
+            import torch
+            from transformers import AutoProcessor, PaliGemmaForConditionalGeneration
+            
+            logger.info(f"正在加载 PaliGemma 模型: {self.model_name}")
+            
+            # 确定数据类型
+            if self.torch_dtype == "auto":
+                dtype = torch.bfloat16 if torch.cuda.is_available() else torch.float32
+            elif self.torch_dtype == "float16":
+                dtype = torch.float16
+            elif self.torch_dtype == "bfloat16":
+                dtype = torch.bfloat16
+            else:
+                dtype = torch.float32
+            
+            # 确定设备
+            if self.device == "auto":
+                device = "cuda" if torch.cuda.is_available() else "cpu"
+            else:
+                device = self.device
+            
+            # 加载 processor 和 model
+            self._processor = AutoProcessor.from_pretrained(self.model_name)
+            self._model = PaliGemmaForConditionalGeneration.from_pretrained(
+                self.model_name,
+                torch_dtype=dtype,
+                device_map=device if device == "auto" else None,
+            )
+            
+            if device != "auto":
+                self._model = self._model.to(device)
+            
+            self._device = device
+            self._dtype = dtype
+            
+            logger.info(f"PaliGemma 模型加载完成! 设备: {device}, 类型: {dtype}")
+            
+        except ImportError as e:
+            logger.error(f"缺少依赖: {e}")
+            logger.error("请安装: pip install transformers torch accelerate")
+            raise
+        except Exception as e:
+            logger.error(f"加载模型失败: {e}")
+            raise
+    
+    def _preprocess_images(self, images: Dict[str, np.ndarray]) -> list:
+        """预处理图像列表"""
+        pil_images = []
+        for key in IMAGE_KEYS:
+            if key in images:
+                img = images[key]
+                if img.dtype != np.uint8:
+                    img = (img * 255).astype(np.uint8)
+                pil_images.append(Image.fromarray(img))
+        return pil_images
+    
+    def _generate_text(self, images: Dict[str, np.ndarray], prompt: str) -> str:
+        """使用 PaliGemma 生成文本"""
+        self._load_model()
+        
+        import torch
+        
+        # 预处理图像（使用第一张图像，PaliGemma 原版是单图像模型）
+        pil_images = self._preprocess_images(images)
+        if not pil_images:
+            return ""
+        
+        # 使用基座图像作为主图像
+        main_image = pil_images[0]
+        
+        # 准备输入
+        inputs = self._processor(
+            text=prompt,
+            images=main_image,
+            return_tensors="pt",
+        )
+        
+        # 移动到设备
+        inputs = {k: v.to(self._model.device) for k, v in inputs.items()}
+        
+        # 生成
+        with torch.no_grad():
+            output = self._model.generate(
+                **inputs,
+                max_new_tokens=self.max_new_tokens,
+                do_sample=False,
+            )
+        
+        # 解码
+        generated_text = self._processor.decode(output[0], skip_special_tokens=True)
+        
+        # 移除输入 prompt
+        if prompt in generated_text:
+            generated_text = generated_text.replace(prompt, "").strip()
+        
+        return generated_text
+    
+    def generate_bimanual_prompts(
+        self,
+        images: Dict[str, np.ndarray],
+        instruction: str,
+    ) -> BimanualPromptResult:
+        """使用 PaliGemma 真正生成双臂 prompt"""
+        num_images = len(images)
+        
+        # 构建生成 prompt
+        prompt = f"""This is a bimanual robot workspace image.
+Task: {instruction}
+
+Decompose this task into subtasks for two robot arms.
+Output format:
+Left Arm: [subtask for left arm]
+Right Arm: [subtask for right arm]
+
+Answer:"""
+        
+        try:
+            generated_text = self._generate_text(images, prompt)
+            
+            # 解析生成的文本
+            left_prompt = ""
+            right_prompt = ""
+            
+            left_match = re.search(r'[Ll]eft\s*[Aa]rm[:\s]+([^\n]+)', generated_text)
+            right_match = re.search(r'[Rr]ight\s*[Aa]rm[:\s]+([^\n]+)', generated_text)
+            
+            if left_match:
+                left_prompt = left_match.group(1).strip()
+            if right_match:
+                right_prompt = right_match.group(1).strip()
+            
+            # 如果解析失败，使用规则后端作为回退
+            if not left_prompt or not right_prompt:
+                logger.warning("PaliGemma 生成结果解析失败，使用规则后端")
+                fallback_result = self._rule_backend.generate_bimanual_prompts(images, instruction)
+                if not left_prompt:
+                    left_prompt = fallback_result.left_arm_prompt
+                if not right_prompt:
+                    right_prompt = fallback_result.right_arm_prompt
+            
+            return BimanualPromptResult(
+                left_arm_prompt=left_prompt,
+                right_arm_prompt=right_prompt,
+                raw_output=f"[PaliGemma Generative] (images: {num_images})\n"
+                          f"Generated:\n{generated_text}",
+            )
+            
+        except Exception as e:
+            logger.error(f"PaliGemma 生成失败: {e}, 使用规则后端")
+            return self._rule_backend.generate_bimanual_prompts(images, instruction)
+    
+    def evaluate_cooperation(
+        self,
+        images: Dict[str, np.ndarray],
+        instruction: str,
+    ) -> CooperationResult:
+        """使用 PaliGemma 真正评估协调度"""
+        num_images = len(images)
+        
+        # 构建评估 prompt
+        prompt = f"""This is a bimanual robot workspace image.
+Task: {instruction}
+
+Rate the cooperation level between the two robot arms from 0.0 to 1.0:
+- 0.0-0.2: Independent tasks, arms work separately
+- 0.2-0.4: Simple handover or sequential tasks
+- 0.4-0.6: Moderate coordination needed
+- 0.6-0.8: High coordination, spatial and temporal alignment
+- 0.8-1.0: Very high cooperation, tight synchronization
+
+Output only a number between 0.0 and 1.0, then explain briefly.
+
+Score:"""
+        
+        try:
+            generated_text = self._generate_text(images, prompt)
+            
+            # 解析分数
+            score_match = re.search(r'(\d+\.?\d*)', generated_text)
+            
+            if score_match:
+                score = float(score_match.group(1))
+                score = max(0.0, min(1.0, score))  # 限制在 [0, 1]
+            else:
+                logger.warning("无法从生成结果中解析分数，使用规则后端")
+                rule_result = self._rule_backend.evaluate_cooperation(images, instruction)
+                score = rule_result.cooperation_score
+            
+            # 解析解释
+            explanation = generated_text.replace(score_match.group(0) if score_match else "", "").strip()
+            if not explanation:
+                explanation = f"PaliGemma evaluated cooperation as {score:.2f}"
+            
+            return CooperationResult(
+                cooperation_score=round(score, 4),
+                explanation=explanation,
+                raw_output=f"[PaliGemma Generative] (images: {num_images})\n"
+                          f"Generated:\n{generated_text}",
+            )
+            
+        except Exception as e:
+            logger.error(f"PaliGemma 评估失败: {e}, 使用规则后端")
+            return self._rule_backend.evaluate_cooperation(images, instruction)
+
+
+# =============================================================================
 # API 后端 (使用外部 VLM API)
 # =============================================================================
 
@@ -1484,7 +2027,9 @@ class BimanualTaskModel:
     支持多种后端模式:
         - rule: 基于规则（快速，不需要模型）
         - image: 规则 + numpy 图像分析（推荐，不依赖深度学习库）
-        - paligemma: 使用 Pi0.5 内置的 PaliGemma VLM
+        - paligemma: 使用 Pi0.5 内置的 PaliGemma VLM（仅图像特征，文本用规则）
+        - pi05_gen: 使用 Pi0.5 原版架构尝试生成自然语言 ⭐ (实验性)
+        - paligemma_gen: 使用 HuggingFace 原版 PaliGemma 生成自然语言
         - api: 使用外部 VLM API（如 GPT-4V）
     
     Example:
@@ -1515,7 +2060,7 @@ class BimanualTaskModel:
         >>> print(result.cooperation_score)
     """
     
-    SUPPORTED_MODES = ["rule", "image", "paligemma", "api"]
+    SUPPORTED_MODES = ["rule", "image", "paligemma", "pi05_gen", "paligemma_gen", "api"]
     
     def __init__(
         self,
@@ -1532,10 +2077,12 @@ class BimanualTaskModel:
             mode: 后端模式
                 - "rule": 仅基于规则（快速测试）
                 - "image": 规则 + numpy 图像分析（推荐）
-                - "paligemma": 使用 Pi0.5 VLM（需要 jax/openpi）
+                - "paligemma": 使用 Pi0.5 VLM（需要 jax/openpi，文本用规则）
+                - "pi05_gen": 使用 Pi0.5 原版架构尝试生成自然语言（实验性）
+                - "paligemma_gen": 使用 HuggingFace 原版 PaliGemma 生成自然语言
                 - "api": 使用外部 VLM API
-            checkpoint_path: 检查点路径（paligemma 模式）
-            use_pretrained: 是否使用预训练模型（paligemma 模式）
+            checkpoint_path: 检查点路径（paligemma/pi05_gen 模式）
+            use_pretrained: 是否使用预训练模型（paligemma/pi05_gen 模式）
             api_key: API Key（api 模式）
             api_provider: API 提供商（api 模式）
         """
@@ -1553,6 +2100,13 @@ class BimanualTaskModel:
                 checkpoint_path=checkpoint_path,
                 use_pretrained=use_pretrained,
             )
+        elif mode == "pi05_gen":
+            self.backend = Pi05TextGenerativeBackend(
+                checkpoint_path=checkpoint_path,
+                use_pretrained=use_pretrained,
+            )
+        elif mode == "paligemma_gen":
+            self.backend = PaliGemmaGenerativeBackend()
         elif mode == "api":
             self.backend = APIBackend(
                 api_key=api_key,
@@ -1784,7 +2338,7 @@ def main():
     )
     parser.add_argument(
         "--mode", type=str, default="image",
-        choices=["rule", "image", "paligemma", "api"],
+        choices=["rule", "image", "paligemma", "pi05_gen", "paligemma_gen", "api"],
         help="后端模式"
     )
     parser.add_argument(
