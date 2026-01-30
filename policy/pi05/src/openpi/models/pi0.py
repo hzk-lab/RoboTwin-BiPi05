@@ -1,17 +1,22 @@
 import logging
+import pathlib
 
 import einops
 import flax.nnx as nnx
 import flax.nnx.bridge as nnx_bridge
 import jax
 import jax.numpy as jnp
+import numpy as np
+from PIL import Image
 from typing_extensions import override
 
 from openpi.models import model as _model
 from openpi.models import pi0_config
+from openpi.models import tokenizer as _tokenizer
 import openpi.models.gemma as _gemma
 import openpi.models.siglip as _siglip
 from openpi.shared import array_typing as at
+from openpi.shared import image_tools
 
 logger = logging.getLogger("openpi")
 
@@ -189,29 +194,94 @@ class Pi0(_model.BaseModel):
     def compute_loss(
         self, rng: at.KeyArrayLike, observation: _model.Observation, actions: _model.Actions, *, train: bool = False
     ) -> at.Float[at.Array, "*b ah"]:
-        preprocess_rng, noise_rng, time_rng = jax.random.split(rng, 3)
-        observation = _model.preprocess_observation(preprocess_rng, observation, train=train)
+        del rng, actions, train
+        max_new_tokens = 16
+        repo_root = pathlib.Path(__file__).resolve().parents[5]
+        default_image = repo_root / "policy" / "RDT" / "assets" / "head.png"
+        prompts = [
+            {
+                "instruction": "Describe the object in the image.",
+                "image_paths": {
+                    "base_0_rgb": default_image,
+                    "left_wrist_0_rgb": default_image,
+                    "right_wrist_0_rgb": default_image,
+                },
+            },
+            {
+                "instruction": "What is the dominant color of the object?",
+                "image_paths": {
+                    "base_0_rgb": default_image,
+                    "left_wrist_0_rgb": default_image,
+                    "right_wrist_0_rgb": default_image,
+                },
+            },
+        ]
+        tokenizer = _tokenizer.PaligemmaTokenizer(max_len=self.max_token_len)
+        paligemma_outputs = []
 
-        batch_shape = actions.shape[:-2]
-        noise = jax.random.normal(noise_rng, actions.shape)
-        time = jax.random.beta(time_rng, 1.5, 1, batch_shape) * 0.999 + 0.001
-        time_expanded = time[..., None, None]
-        x_t = time_expanded * noise + (1 - time_expanded) * actions
-        u_t = noise - actions
+        for prompt in prompts:
+            images = {}
+            image_masks = {}
+            for key, image_path in prompt["image_paths"].items():
+                image = np.array(Image.open(image_path).convert("RGB"), dtype=np.float32)
+                image = image / 255.0 * 2.0 - 1.0
+                image = jnp.asarray(image)
+                image = image_tools.resize_with_pad(
+                    image, _model.IMAGE_RESOLUTION[0], _model.IMAGE_RESOLUTION[1]
+                )
+                images[key] = image[None, ...]
+                image_masks[key] = jnp.ones((1,), dtype=jnp.bool_)
 
-        # one big forward pass of prefix + suffix at once
-        prefix_tokens, prefix_mask, prefix_ar_mask = self.embed_prefix(observation)
-        suffix_tokens, suffix_mask, suffix_ar_mask, adarms_cond = self.embed_suffix(observation, x_t, time)
-        input_mask = jnp.concatenate([prefix_mask, suffix_mask], axis=1)
-        ar_mask = jnp.concatenate([prefix_ar_mask, suffix_ar_mask], axis=0)
-        attn_mask = make_attn_mask(input_mask, ar_mask)
-        positions = jnp.cumsum(input_mask, axis=1) - 1
-        (prefix_out, suffix_out), _ = self.PaliGemma.llm(
-            [prefix_tokens, suffix_tokens], mask=attn_mask, positions=positions, adarms_cond=[None, adarms_cond]
-        )
-        v_t = self.action_out_proj(suffix_out[:, -self.action_horizon :])
+            tokens, token_mask = tokenizer.tokenize(prompt["instruction"])
+            prompt_len = int(token_mask.sum())
+            tokenized_prompt = jnp.asarray(tokens)[None, :]
+            tokenized_prompt_mask = jnp.asarray(token_mask)[None, :]
 
-        return jnp.mean(jnp.square(v_t - u_t), axis=-1)
+            prompt_obs = _model.Observation(
+                images=images,
+                image_masks=image_masks,
+                state=jnp.zeros((1, observation.state.shape[-1]), dtype=observation.state.dtype),
+                tokenized_prompt=tokenized_prompt,
+                tokenized_prompt_mask=tokenized_prompt_mask,
+            )
+            prompt_obs = _model.preprocess_observation(
+                None, prompt_obs, train=False, image_keys=list(images.keys())
+            )
+
+            prefix_tokens, prefix_mask, prefix_ar_mask = self.embed_prefix(prompt_obs)
+            generated_tokens = []
+            token_ids = jnp.asarray(tokens[:prompt_len])[None, :]
+
+            for _ in range(max_new_tokens):
+                token_embeddings = self.PaliGemma.llm(token_ids, method="embed")
+                full_tokens = jnp.concatenate([prefix_tokens, token_embeddings], axis=1)
+                token_mask_full = jnp.concatenate(
+                    [
+                        tokenized_prompt_mask[:, : prompt_len],
+                        jnp.ones((1, token_ids.shape[1] - prompt_len), dtype=jnp.bool_),
+                    ],
+                    axis=1,
+                )
+                full_mask = jnp.concatenate([prefix_mask, token_mask_full], axis=1)
+                prompt_ar = jnp.zeros((prompt_len,), dtype=jnp.bool_)
+                generated_ar = jnp.ones((token_ids.shape[1] - prompt_len,), dtype=jnp.bool_)
+                full_ar_mask = jnp.concatenate([prefix_ar_mask, prompt_ar, generated_ar], axis=0)
+                attn_mask = make_attn_mask(full_mask, full_ar_mask)
+                positions = jnp.cumsum(full_mask, axis=1) - 1
+                (hidden, _), _ = self.PaliGemma.llm(
+                    [full_tokens, None], mask=attn_mask, positions=positions, adarms_cond=[None, None]
+                )
+                logits = self.PaliGemma.llm(hidden, method="decode")
+                next_token = jnp.argmax(logits[:, -1, :], axis=-1)
+                generated_tokens.append(next_token)
+                token_ids = jnp.concatenate([token_ids, next_token[:, None]], axis=1)
+
+            generated_ids = jnp.concatenate(generated_tokens, axis=0)[None, :]
+            decoded_text = tokenizer._tokenizer.decode(generated_ids[0].tolist())
+            paligemma_outputs.append(generated_ids)
+            logger.info("PaliGemma output for prompt '%s': %s", prompt["instruction"], decoded_text)
+
+        return paligemma_outputs[0]
 
     @override
     def sample_actions(
