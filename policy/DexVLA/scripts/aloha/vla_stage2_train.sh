@@ -7,19 +7,20 @@ ACTION_HEAD=dit_diffusion_policy  #act #unet_diffusion_policy dit_diffusion_poli
 
 #echo '1h'
 #sleep 1.5h
-ROOT=/data/private/joy 
+ROOT=/vepfs-mlp2/mlp-public/haoce/zxr
 PRETRAIN=${ROOT}/wjj/model_param/multi_head2/${ACTION_HEAD}_results/checkpoint_all/${LLM}_${LLM_MODEL_SIZE}_pure/vanilla_aloha_${LLM}_vla_pt_f_vit/qwen2_vl_all_data_1200_align_frozen_dit_lora_substep_chunk_50/checkpoint-40000 # with substeps DIT
-DIT_PRETRAIN=/data/private/policy_step_60000_2025-06-15_09-15-25.ckpt
+DIT_PRETRAIN=/vepfs-mlp2/mlp-public/haoce/zxr/.cache_big/hf_models/scale_dp_h/open_scale_dp_h_backbone.ckpt
 if [ "${LLM}" == "paligemma" ]; then
   echo "Using PaliGemma"
-  mnop=${ROOT}/wjj/model_param/PaliGemma/paligemma/pixel_224/vla-paligemma-3b-pt-224
+  mnop=${ROOT}/.cache_big/hf_models/Qwen2-VL-2B-Instruct/Qwen2-VL-2B-Instruct/Qwen2-VL-2B-Instruct
 else
-  mnop=${ROOT}/Qwen2-VL-${LLM_MODEL_SIZE}-Instruct # original qwen2vl
+  mnop=${ROOT}/.cache_big/hf_models/Qwen2-VL-2B-Instruct/Qwen2-VL-2B-Instruct/Qwen2-VL-2B-Instruct
 
 fi
 ############################################################################################################################################
-TASKNAME=your_test_task
-OUTPUT=${ROOT}/dex-checkpoints/stage2/${LLM}_${LLM_MODEL_SIZE}/${TASKNAME}_Stage2_DIT_H_Stage1_1_17_using_state_correct
+TASKNAME=place_empty_cup
+OUTPUT=${ROOT}/dex-checkpoints/stage2/${LLM}_${LLM_MODEL_SIZE}/${TASKNAME}_Stage2_DIT_H_Stage1_1_17_using_state_correct/qwen2_lora
+mkdir -p $OUTPUT
 
 if [ -d "$OUTPUT" ]; then
    echo 'output exists'
@@ -38,7 +39,7 @@ cp -r ./policy_heads $OUTPUT/src/
 # tinyvla set "use_reasoning with_llm_head load_pretrain using_film" false
 # paligemma flash_attn False
 
-deepspeed --master_port 29604 --num_gpus=8 --num_nodes=1 ./train_vla.py \
+deepspeed --master_port 29604 --num_gpus=2 --num_nodes=1 ./train_vla.py \
   --deepspeed scripts/zero2.json \
   --using_state True \
   --use_reasoning True \
@@ -58,8 +59,8 @@ deepspeed --master_port 29604 --num_gpus=8 --num_nodes=1 ./train_vla.py \
   --policy_head_type $ACTION_HEAD \
   --policy_head_size "H" \
   --with_llm_head True \
-  --image_size_stable "(320,240)" \
-  --image_size_wrist "(320,240)" \
+  --image_size_stable "(256,192)" \
+  --image_size_wrist "(256,192)" \
   --lora_r 64 \
   --lora_alpha 256 \
   --episode_first False \
@@ -73,9 +74,9 @@ deepspeed --master_port 29604 --num_gpus=8 --num_nodes=1 ./train_vla.py \
   --group_by_modality_length False \
   --bf16 True \
   --output_dir $OUTPUT \
-  --max_steps 60000 \
-  --per_device_train_batch_size 20 \
-  --gradient_accumulation_steps 1 \
+  --max_steps 20000 \
+  --per_device_train_batch_size 8 \
+  --gradient_accumulation_steps 2 \
   --save_strategy "steps" \
   --save_steps 10000 \
   --save_total_limit 50 \

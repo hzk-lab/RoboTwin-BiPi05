@@ -1,7 +1,7 @@
 import contextlib
 import functools as ft
 import inspect
-from typing import TypeAlias, TypeVar, cast
+from typing import TypeAlias, TypeVar, cast, Any
 
 import beartype
 import jax
@@ -9,7 +9,12 @@ import jax._src.tree_util as private_tree_util
 import jax.core
 from jaxtyping import ArrayLike
 from jaxtyping import Bool  # noqa: F401
-from jaxtyping import DTypeLike  # noqa: F401
+# DTypeLike 在新版本 jaxtyping 中被移除，使用兼容处理
+try:
+    from jaxtyping import DTypeLike  # noqa: F401
+except ImportError:
+    # 对于新版本的 jaxtyping，使用 Any 作为替代
+    DTypeLike = Any  # noqa: F401
 from jaxtyping import Float
 from jaxtyping import Int  # noqa: F401
 from jaxtyping import Key  # noqa: F401
@@ -19,28 +24,32 @@ from jaxtyping import Real  # noqa: F401
 from jaxtyping import UInt8  # noqa: F401
 from jaxtyping import config
 from jaxtyping import jaxtyped
-import jaxtyping._decorator
 import torch
+
+# Redefine Array to include both JAX arrays and PyTorch tensors
+Array = jax.Array | torch.Tensor
 
 # patch jaxtyping to handle https://github.com/patrick-kidger/jaxtyping/issues/277.
 # the problem is that custom PyTree nodes are sometimes initialized with arbitrary types (e.g., `jax.ShapeDtypeStruct`,
 # `jax.Sharding`, or even <object>) due to JAX tracing operations. this patch skips typechecking when the stack trace
 # contains `jax._src.tree_util`, which should only be the case during tree unflattening.
-_original_check_dataclass_annotations = jaxtyping._decorator._check_dataclass_annotations  # noqa: SLF001
-# Redefine Array to include both JAX arrays and PyTorch tensors
-Array = jax.Array | torch.Tensor
+try:
+    import jaxtyping._decorator
+    if hasattr(jaxtyping._decorator, '_check_dataclass_annotations'):
+        _original_check_dataclass_annotations = jaxtyping._decorator._check_dataclass_annotations  # noqa: SLF001
 
+        def _check_dataclass_annotations(self, typechecker):
+            if not any(
+                frame.frame.f_globals.get("__name__") in {"jax._src.tree_util", "flax.nnx.transforms.compilation"}
+                for frame in inspect.stack()
+            ):
+                return _original_check_dataclass_annotations(self, typechecker)
+            return None
 
-def _check_dataclass_annotations(self, typechecker):
-    if not any(
-        frame.frame.f_globals.get("__name__") in {"jax._src.tree_util", "flax.nnx.transforms.compilation"}
-        for frame in inspect.stack()
-    ):
-        return _original_check_dataclass_annotations(self, typechecker)
-    return None
-
-
-jaxtyping._decorator._check_dataclass_annotations = _check_dataclass_annotations  # noqa: SLF001
+        jaxtyping._decorator._check_dataclass_annotations = _check_dataclass_annotations  # noqa: SLF001
+except (ImportError, AttributeError):
+    # 新版本 jaxtyping 可能没有这个属性，跳过 patch
+    pass
 
 KeyArrayLike: TypeAlias = jax.typing.ArrayLike
 Params: TypeAlias = PyTree[Float[ArrayLike, "..."]]

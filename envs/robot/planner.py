@@ -10,6 +10,8 @@ import transforms3d as t3d
 import envs._GLOBAL_CONFIGS as CONFIGS
 
 
+CUROBO_AVAILABLE = True
+
 try:
     # ********************** CuroboPlanner (optional) **********************
     from curobo.types.math import Pose as CuroboPose
@@ -271,9 +273,16 @@ try:
             return result_p, result_q
     
 except Exception as e:
+    CUROBO_AVAILABLE = False
     print('[planner.py]: Something wrong happened when importing CuroboPlanner! Please check if Curobo is installed correctly. If the problem still exists, you can install Curobo from https://github.com/NVlabs/curobo manually.')
     print('Exception traceback:')
     traceback.print_exc()
+
+    class CuroboPlanner:
+        def __init__(self, *args, **kwargs):
+            raise RuntimeError(
+                "Curobo is not available. Please install curobo or switch to mplib planner."
+            )
 
 
 # ********************** MplibPlanner **********************
@@ -407,6 +416,7 @@ class MplibPlanner:
         Interpolative planning with screw motion.
         Will not avoid collision and will fail if the path contains collision.
         """
+        result = {"status": "Fail"}
         if self.planner_type == "mplib_RRT":
             result = self.plan_pose(
                 now_qpos,
@@ -419,6 +429,9 @@ class MplibPlanner:
             )
         elif self.planner_type == "mplib_screw":
             result = self.plan_screw(now_qpos, target_pose, use_point_cloud, use_attach, arms_tag, log)
+        else:
+            if log:
+                print(f"\n {arms_tag} arm planning failed (unknown planner_type: {self.planner_type}) !")
 
         return result
 
@@ -432,3 +445,36 @@ class MplibPlanner:
         res["per_step"] = per_step  # dis per step
         res["result"] = vals
         return res
+
+    def plan_batch(
+        self,
+        curr_joint_pos,
+        target_gripper_pose_list,
+        constraint_pose=None,
+        arms_tag=None,
+    ):
+        statuses = []
+        positions = []
+        velocities = []
+        for target_pose in target_gripper_pose_list:
+            result = self.plan_path(
+                curr_joint_pos,
+                target_pose,
+                arms_tag=arms_tag,
+                log=False,
+            )
+            statuses.append(result.get("status", "Fail"))
+            if result.get("status") == "Success":
+                positions.append(result.get("position", np.zeros((0, len(curr_joint_pos)))))
+                velocities.append(result.get("velocity", np.zeros_like(positions[-1])))
+            else:
+                positions.append(np.zeros((0, len(curr_joint_pos))))
+                velocities.append(np.zeros((0, len(curr_joint_pos))))
+        return {
+            "status": np.array(statuses),
+            "position": np.array(positions, dtype=object),
+            "velocity": np.array(velocities, dtype=object),
+        }
+
+    def update_point_cloud(self, *args, **kwargs):
+        return

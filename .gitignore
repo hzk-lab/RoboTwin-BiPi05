@@ -10,6 +10,8 @@ viewer_show.*
 eval_video/
 task_config/
 **/.DS_Store
+assets/
+policy/DexVLA
 
 # eval result
 eval_result/

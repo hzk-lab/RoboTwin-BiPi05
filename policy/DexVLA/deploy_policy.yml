@@ -1,13 +1,13 @@
 # Basic experiment configuration (keep unchanged)
 policy_name: DexVLA
-task_name: task_name_you_test
-task_config: null
-ckpt_setting: null
+task_name: place_empty_cup
+task_config: demo_clean
+ckpt_setting: demo_clean
 seed: null
 instruction_type: unseen
 
 # Specify path to trained DexVLA(Required)
-model_path: "/Modify/policy/DexVLA/model/150000"
-stats_path: "/Modify/robo2/policy/DexVLA/model/dataset_stats.pkl"
+model_path: "/vepfs-mlp2/mlp-public/haoce/zxr/dex-checkpoints/stage2/qwen2_vl_2B/place_empty_cup_Stage2_DIT_H_Stage1_1_17_using_state_correct/qwen2_lora/checkpoint-20000"
+stats_path: "/vepfs-mlp2/mlp-public/haoce/zxr/dex-checkpoints/stage2/qwen2_vl_2B/place_empty_cup_Stage2_DIT_H_Stage1_1_17_using_state_correct/qwen2_lora/dataset_stats.pkl"
 action_head: 'scale_dp_policy' # "dit_diffusion_policy"   # or 'unet_diffusion_policy'
 setting: NULL

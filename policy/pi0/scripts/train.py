@@ -2,6 +2,7 @@ import dataclasses
 import functools
 import logging
 import platform
+import time
 from typing import Any
 
 import etils.epath as epath
@@ -11,6 +12,7 @@ import flax.traverse_util as traverse_util
 import jax
 import jax.experimental
 import jax.numpy as jnp
+import numpy as np
 import optax
 import tqdm_loggable.auto as tqdm
 import wandb
@@ -155,6 +157,38 @@ def init_train_state(
 
 
 @at.typecheck
+def measure_inference_time(
+    model: _model.BaseModel,
+    rng: at.KeyArrayLike,
+    observation: _model.Observation,
+    num_runs: int = 10,
+) -> dict[str, float]:
+    """测量 sample_actions 的 inference time（不包括 JIT 编译时间）"""
+    # Warmup run (includes JIT compilation)
+    rng, warmup_rng = jax.random.split(rng)
+    _ = model.sample_actions(warmup_rng, observation)
+    jax.block_until_ready(_)
+    
+    # Actual timing runs
+    inference_times = []
+    for i in range(num_runs):
+        rng, sample_rng = jax.random.split(rng)
+        start_time = time.perf_counter()
+        actions = model.sample_actions(sample_rng, observation)
+        jax.block_until_ready(actions)
+        end_time = time.perf_counter()
+        inference_times.append((end_time - start_time) * 1000)  # ms
+    
+    times = np.array(inference_times)
+    return {
+        "inference_time_mean_ms": float(np.mean(times)),
+        "inference_time_std_ms": float(np.std(times)),
+        "inference_time_min_ms": float(np.min(times)),
+        "inference_time_max_ms": float(np.max(times)),
+    }
+
+
+@at.typecheck
 def train_step(
     config: _config.TrainConfig,
     rng: at.KeyArrayLike,
@@ -289,6 +323,22 @@ def main(config: _config.TrainConfig):
         batch = next(data_iter)
 
         if (step % config.save_interval == 0 and step > start_step) or step == config.num_train_steps - 1:
+            # 在保存 checkpoint 时测量 inference time
+            logging.info(f"Measuring inference time at step {step}...")
+            model = nnx.merge(train_state.model_def, train_state.params)
+            model.eval()
+            observation, _ = batch
+            infer_rng = jax.random.fold_in(train_rng, step + 1000000)
+            inference_stats = measure_inference_time(model, infer_rng, observation, num_runs=10)
+            logging.info(
+                f"Step {step} Inference Time: "
+                f"mean={inference_stats['inference_time_mean_ms']:.2f}ms, "
+                f"std={inference_stats['inference_time_std_ms']:.2f}ms, "
+                f"min={inference_stats['inference_time_min_ms']:.2f}ms, "
+                f"max={inference_stats['inference_time_max_ms']:.2f}ms"
+            )
+            wandb.log(inference_stats, step=step)
+            
             if step == config.num_train_steps - 1:
                 _checkpoints.save_state(checkpoint_manager, train_state, data_loader, step + 1)
             else:

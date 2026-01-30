@@ -11,5 +11,5 @@ train_config_name: pi0_base_aloha_robotwin_lora
 model_name: pi0
 # 对应本地 data0 路径:
 # /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50/15000
-checkpoint_id: 15000
+checkpoint_id: 30000
 pi0_step: 50

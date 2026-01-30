@@ -6,6 +6,7 @@
 import json
 import os
 import sys
+import time
 # 优先使用当前策略目录下的本地 openpi 代码，避免导入到系统已安装的旧版本
 sys.path.insert(0, os.path.join(os.path.dirname(__file__), "src"))
 
@@ -39,7 +40,7 @@ class PI0:
         # checkpoint 位置：
         # data0 本地检查点结构示例：
         # /data0/users/haoce/RoboTwin/policy/pi0/checkpoints/pi0_base_aloha_robotwin_lora/shake_bottle-demo_clean-50/15000
-        ckpt_dir = f"/data0/users/haoce/RoboTwin/policy/pi0/checkpoints/{self.train_config_name}/shake_bottle-demo_clean-50/{self.checkpoint_id}"
+        ckpt_dir = f"/c20250502/zxr/checkpoints/pi0_base_aloha_robotwin_lora/pi0/{self.checkpoint_id}"
         self.policy = _policy_config.create_trained_policy(
             config,
             ckpt_dir,
@@ -48,6 +49,11 @@ class PI0:
         self.img_size = (224, 224)
         self.observation_window = None
         self.pi0_step = pi0_step
+        
+        # Inference time tracking
+        self.inference_times = []
+        self.warmup_done = False
+        self.measure_time = True  # 设置为 True 来启用时间测量
 
     # set img_size
     def set_img_size(self, img_size):
@@ -82,9 +88,53 @@ class PI0:
 
     def get_action(self):
         assert self.observation_window is not None, "update observation_window first!"
-        return self.policy.infer(self.observation_window)["actions"]
+        
+        if self.measure_time:
+            # JAX 需要先 block_until_ready 确保计算完成
+            start_time = time.perf_counter()
+            actions = self.policy.infer(self.observation_window)["actions"]
+            # 确保 JAX 计算完成（block_until_ready）
+            if hasattr(actions, 'block_until_ready'):
+                actions.block_until_ready()
+            else:
+                # numpy array，不需要 block
+                pass
+            end_time = time.perf_counter()
+            
+            inference_time_ms = (end_time - start_time) * 1000
+            
+            if not self.warmup_done:
+                # 第一次调用是 warmup（包含 JIT 编译时间）
+                print(f"[Warmup] Inference time (with JIT compilation): {inference_time_ms:.2f} ms")
+                self.warmup_done = True
+            else:
+                self.inference_times.append(inference_time_ms)
+                print(f"[Inference] Time: {inference_time_ms:.2f} ms")
+            
+            return actions
+        else:
+            return self.policy.infer(self.observation_window)["actions"]
 
     def reset_obsrvationwindows(self):
         self.instruction = None
         self.observation_window = None
         print("successfully unset obs and language intruction")
+    
+    def print_inference_stats(self):
+        """打印 inference time 统计信息"""
+        if len(self.inference_times) == 0:
+            print("No inference time data collected (excluding warmup)")
+            return
+        
+        times = np.array(self.inference_times)
+        print("\n" + "="*50)
+        print("PI0 High-Level Inference Time Statistics")
+        print("="*50)
+        print(f"  Total inferences: {len(times)}")
+        print(f"  Mean:   {np.mean(times):.2f} ms")
+        print(f"  Std:    {np.std(times):.2f} ms")
+        print(f"  Min:    {np.min(times):.2f} ms")
+        print(f"  Max:    {np.max(times):.2f} ms")
+        print(f"  Median: {np.median(times):.2f} ms")
+        print(f"  FPS:    {1000 / np.mean(times):.2f}")
+        print("="*50 + "\n")

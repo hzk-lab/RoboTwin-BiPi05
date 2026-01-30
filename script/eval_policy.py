@@ -1,6 +1,7 @@
 import sys
 import os
 import subprocess
+import time
 
 sys.path.append("./")
 sys.path.append(f"./policy")
@@ -160,10 +161,12 @@ def main(usr_args):
     st_seed = 100000 * (1 + seed)
     suc_nums = []
     # 每个进程评测的 episode 数量（可从配置中读取）
-    test_num = 100
+    test_num = args.get("test_num", 100)
     topk = 1
 
+    print("[eval] loading model...", flush=True)
     model = get_model(usr_args)
+    print("[eval] model loaded.", flush=True)
     st_seed, suc_num = eval_policy(task_name,
                                    TASK_ENV,
                                    args,
@@ -198,7 +201,17 @@ def eval_policy(task_name,
     print(f"\033[34mTask Name: {args['task_name']}\033[0m")
     print(f"\033[34mPolicy Name: {args['policy_name']}\033[0m")
 
-    expert_check = True
+    def _to_bool(value, default=True):
+        if value is None:
+            return default
+        if isinstance(value, bool):
+            return value
+        if isinstance(value, str):
+            return value.strip().lower() in ("1", "true", "yes", "y")
+        return bool(value)
+
+    expert_check = _to_bool(args.get("expert_check"), False)  # 默认关闭，直接跑 policy eval
+    print(f"[eval] expert_check={expert_check}", flush=True)
     TASK_ENV.suc = 0
     TASK_ENV.test_num = 0
 
@@ -209,6 +222,11 @@ def eval_policy(task_name,
     policy_name = args["policy_name"]
     eval_func = eval_function_decorator(policy_name, "eval")
     reset_func = eval_function_decorator(policy_name, "reset_model")
+    # 尝试获取 print_inference_stats 函数（如果存在）
+    try:
+        print_stats_func = eval_function_decorator(policy_name, "print_inference_stats")
+    except AttributeError:
+        print_stats_func = None
 
     now_seed = st_seed
     task_total_reward = 0
@@ -216,14 +234,18 @@ def eval_policy(task_name,
 
     args["eval_mode"] = True
 
+    print(f"[eval] start loop: test_num={test_num}, st_seed={st_seed}", flush=True)
     while succ_seed < test_num:
         render_freq = args["render_freq"]
         args["render_freq"] = 0
 
         if expert_check:
             try:
+                print(f"[eval] setup_demo seed={now_seed} ep={now_id}", flush=True)
                 TASK_ENV.setup_demo(now_ep_num=now_id, seed=now_seed, is_test=True, **args)
+                print("[eval] play_once start", flush=True)
                 episode_info = TASK_ENV.play_once()
+                print("[eval] play_once done", flush=True)
                 TASK_ENV.close_env()
             except UnStableError as e:
                 # print(" -------------")
@@ -234,33 +256,38 @@ def eval_policy(task_name,
                 args["render_freq"] = render_freq
                 continue
             except Exception as e:
-                # stack_trace = traceback.format_exc()
-                # print(" -------------")
-                # print("Error: ", e)
-                # print(" -------------")
+                print("-------------")
+                print("error occurs !")
+                print("Error:", repr(e))
+                traceback.print_exc()
+                print("-------------")
                 TASK_ENV.close_env()
                 now_seed += 1
                 args["render_freq"] = render_freq
-                print("error occurs !")
                 continue
 
         if (not expert_check) or (TASK_ENV.plan_success and TASK_ENV.check_success()):
             succ_seed += 1
             suc_test_seed_list.append(now_seed)
         else:
+            print("[eval] expert_check failed, skip seed", now_seed, flush=True)
             now_seed += 1
             args["render_freq"] = render_freq
             continue
 
         args["render_freq"] = render_freq
 
+        print(f"[eval] setup_demo (policy) seed={now_seed} ep={now_id}", flush=True)
         TASK_ENV.setup_demo(now_ep_num=now_id, seed=now_seed, is_test=True, **args)
-        episode_info_list = [episode_info["info"]]
-        results = generate_episode_descriptions(args["task_name"], episode_info_list, test_num)
-        instruction = np.random.choice(results[0][instruction_type])
+        print("[eval] setup_demo (policy) done", flush=True)
+        
+        # 直接使用默认指令，跳过 generate_episode_descriptions（它需要 expert_check 的 info）
+        instruction = f"Complete the {args['task_name'].replace('_', ' ')} task."
+        print(f"[eval] set_instruction: {instruction}", flush=True)
         TASK_ENV.set_instruction(instruction=instruction)  # set language instruction
 
         if TASK_ENV.eval_video_path is not None:
+            print(f"[eval] video path: {TASK_ENV.eval_video_path}", flush=True)
             ffmpeg = subprocess.Popen(
                 [
                     "ffmpeg",
@@ -288,14 +315,28 @@ def eval_policy(task_name,
                 stdin=subprocess.PIPE,
             )
             TASK_ENV._set_eval_video_ffmpeg(ffmpeg)
+        else:
+            print("[eval] eval_video_path is None (no video)", flush=True)
 
         succ = False
         reset_func(model)
+        last_cnt = TASK_ENV.take_action_cnt
+        last_time = time.time()
         while TASK_ENV.take_action_cnt < TASK_ENV.step_lim:
+            if TASK_ENV.take_action_cnt % 10 == 0:
+                print(f"[eval] step {TASK_ENV.take_action_cnt}/{TASK_ENV.step_lim}", flush=True)
             observation = TASK_ENV.get_obs()
+            print("[eval] eval_func start", flush=True)
             eval_func(TASK_ENV, model, observation)
+            print("[eval] eval_func done", flush=True)
             if TASK_ENV.eval_success:
                 succ = True
+                break
+            if TASK_ENV.take_action_cnt != last_cnt:
+                last_cnt = TASK_ENV.take_action_cnt
+                last_time = time.time()
+            elif time.time() - last_time > 60:
+                print("[eval] WARNING: no progress for 60s, breaking loop", flush=True)
                 break
         # task_total_reward += TASK_ENV.episode_score
         if TASK_ENV.eval_video_path is not None:
@@ -321,6 +362,10 @@ def eval_policy(task_name,
         )
         # TASK_ENV._take_picture()
         now_seed += 1
+
+    # 打印 inference time 统计信息（如果支持）
+    if print_stats_func is not None:
+        print_stats_func(model)
 
     return now_seed, TASK_ENV.suc
 

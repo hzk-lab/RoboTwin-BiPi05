@@ -1,0 +1,16 @@
+{"time":"2026-01-11T11:43:17.317780479+03:00","level":"INFO","msg":"using version","core version":"0.19.1"}
+{"time":"2026-01-11T11:43:17.317859521+03:00","level":"INFO","msg":"created symlink","path":"/vepfs-mlp2/mlp-public/haoce/zxr/RoboTwin-BiPi05/policy/TwinVLA1/wandb/run-20260111_114317-in2jybbw/logs/debug-core.log"}
+{"time":"2026-01-11T11:43:17.445499295+03:00","level":"INFO","msg":"created new stream","id":"in2jybbw"}
+{"time":"2026-01-11T11:43:17.445556821+03:00","level":"INFO","msg":"stream: started","id":"in2jybbw"}
+{"time":"2026-01-11T11:43:17.445603396+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"in2jybbw"}
+{"time":"2026-01-11T11:43:17.445617844+03:00","level":"INFO","msg":"handler: started","stream_id":"in2jybbw"}
+{"time":"2026-01-11T11:43:17.445601888+03:00","level":"INFO","msg":"sender: started","stream_id":"in2jybbw"}
+{"time":"2026-01-11T11:43:18.18599043+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-01-11T11:43:27.664945947+03:00","level":"INFO","msg":"stream: closing","id":"in2jybbw"}
+{"time":"2026-01-11T11:43:27.665038797+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-01-11T11:43:27.665682094+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-01-11T11:43:29.011199122+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-01-11T11:43:29.67463303+03:00","level":"INFO","msg":"handler: closed","stream_id":"in2jybbw"}
+{"time":"2026-01-11T11:43:29.674700601+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"in2jybbw"}
+{"time":"2026-01-11T11:43:29.674710788+03:00","level":"INFO","msg":"sender: closed","stream_id":"in2jybbw"}
+{"time":"2026-01-11T11:43:29.675038089+03:00","level":"INFO","msg":"stream: closed","id":"in2jybbw"}

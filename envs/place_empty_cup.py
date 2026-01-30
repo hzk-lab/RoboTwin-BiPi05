@@ -53,14 +53,18 @@ class place_empty_cup(Base_Task):
         cup_pose = self.cup.get_pose().p
 
     def play_once(self):
+        print("[place_empty_cup] play_once start", flush=True)
         # Get the current pose of the cup
         cup_pose = self.cup.get_pose().p
         # Determine which arm to use based on cup's x position (right if positive, left if negative)
         arm_tag = ArmTag("right" if cup_pose[0] > 0 else "left")
+        print(f"[place_empty_cup] arm_tag={arm_tag}", flush=True)
 
         # Close the gripper to prepare for grasping
+        print("[place_empty_cup] close_gripper", flush=True)
         self.move(self.close_gripper(arm_tag, pos=0.6))
         # Grasp the cup using the selected arm
+        print("[place_empty_cup] grasp_actor", flush=True)
         self.move(
             self.grasp_actor(
                 self.cup,
@@ -69,11 +73,13 @@ class place_empty_cup(Base_Task):
                 contact_point_id=[0, 2][int(arm_tag == "left")],
             ))
         # Lift the cup up by 0.08 meters along z-axis
+        print("[place_empty_cup] lift", flush=True)
         self.move(self.move_by_displacement(arm_tag, z=0.08, move_axis="arm"))
 
         # Get coaster's functional point as target pose
         target_pose = self.coaster.get_functional_point(0)
         # Place the cup onto the coaster
+        print("[place_empty_cup] place_actor", flush=True)
         self.move(self.place_actor(
             self.cup,
             arm_tag,
@@ -82,9 +88,11 @@ class place_empty_cup(Base_Task):
             pre_dis=0.05,
         ))
         # Lift the arm slightly (0.05m) after placing to avoid collision
+        print("[place_empty_cup] post lift", flush=True)
         self.move(self.move_by_displacement(arm_tag, z=0.05, move_axis="arm"))
 
         self.info["info"] = {"{A}": "021_cup/base0", "{B}": "019_coaster/base0"}
+        print("[place_empty_cup] play_once done", flush=True)
         return self.info
 
     def check_success(self):

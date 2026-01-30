@@ -16,7 +16,7 @@ import tqdm_loggable.auto as tqdm
 
 # Environment variable to control cache directory path, ~/.cache/openpi will be used by default.
 _OPENPI_DATA_HOME = "OPENPI_DATA_HOME"
-DEFAULT_CACHE_DIR = "~/.cache/openpi"
+DEFAULT_CACHE_DIR = "/c20250502/zxr/ckpt/.cache/openpi"
 
 logger = logging.getLogger(__name__)
 
@@ -71,7 +71,7 @@ def maybe_download(url: str, *, force_download: bool = False, **kwargs) -> pathl
 
     try:
         lock_path = local_path.with_suffix(".lock")
-        with filelock.FileLock(lock_path):
+        with filelock.SoftFileLock(lock_path):
             # Ensure consistent permissions for the lock file.
             _ensure_permissions(lock_path)
             # First, remove the existing cache if it is expired.
@@ -187,7 +187,10 @@ def _should_invalidate_cache(cache_dir: pathlib.Path, local_path: pathlib.Path) 
 
     assert local_path.exists(), f"File not found at {local_path}"
 
+    cache_dir = cache_dir.resolve()
+    local_path = local_path.resolve()
     relative_path = str(local_path.relative_to(cache_dir))
+
     for pattern, expire_time in _INVALIDATE_CACHE_DIRS.items():
         if pattern.match(relative_path):
             # Remove if not newer than the expiration timestamp.

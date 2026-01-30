@@ -6,7 +6,20 @@ from typing import Protocol, SupportsIndex, TypeVar
 
 import jax
 import jax.numpy as jnp
-import lerobot.common.datasets.lerobot_dataset as lerobot_dataset
+try:
+    # 旧版路径（如果存在就用）
+    import lerobot.common.datasets.lerobot_dataset as lerobot_dataset
+except ModuleNotFoundError:
+    # 新版路径（0.3.x/0.4.x 通常是这个）
+    import lerobot.datasets.lerobot_dataset as lerobot_dataset
+
+    # 旧代码可能还会用到 HF_LEROBOT_HOME，把它补回到同名属性上
+    try:
+        from lerobot.constants import HF_LEROBOT_HOME
+        setattr(lerobot_dataset, "HF_LEROBOT_HOME", HF_LEROBOT_HOME)
+    except Exception:
+        pass
+
 import numpy as np
 import torch
 
@@ -14,7 +27,7 @@ import openpi.models.model as _model
 import openpi.training.config as _config
 import openpi.transforms as _transforms
 
-T_co = TypeVar("T_co", covariant=True)
+T_co = TypeVar("T_co", covariant=True) 
 
 
 class Dataset(Protocol[T_co]):

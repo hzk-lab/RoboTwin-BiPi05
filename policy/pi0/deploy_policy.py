@@ -52,3 +52,8 @@ def eval(TASK_ENV, model, observation):
 
 def reset_model(model):
     model.reset_obsrvationwindows()
+
+
+def print_inference_stats(model):
+    """在 eval 结束后调用，打印 inference time 统计"""
+    model.print_inference_stats()

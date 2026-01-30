@@ -1,7 +1,7 @@
 import sapien.core as sapien
 import numpy as np
 import pdb
-from .planner import MplibPlanner
+from .planner import MplibPlanner, CuroboPlanner, CUROBO_AVAILABLE
 import numpy as np
 import toppra as ta
 import math
@@ -12,7 +12,6 @@ from copy import deepcopy
 import sapien.core as sapien
 import envs._GLOBAL_CONFIGS as CONFIGS
 from envs.utils import transforms
-from .planner import CuroboPlanner
 import torch.multiprocessing as mp
 
 
@@ -124,7 +123,10 @@ class Robot:
     def reset(self, scene, need_topp=False, **kwargs):
         self._init_robot_(scene, need_topp, **kwargs)
 
-        if self.communication_flag:
+        # 检查 planner 相关属性是否存在，如果不存在则调用 set_planner
+        if not hasattr(self, 'communication_flag') or not hasattr(self, 'left_planner') or not hasattr(self, 'right_planner'):
+            self.set_planner(scene=scene)
+        elif self.communication_flag:
             if hasattr(self, "left_conn") and self.left_conn:
                 self.left_conn.send({"cmd": "reset"})
                 _ = self.left_conn.recv()
@@ -132,8 +134,9 @@ class Robot:
                 self.right_conn.send({"cmd": "reset"})
                 _ = self.right_conn.recv()
         else:
-            if not isinstance(self.left_planner, CuroboPlanner) or not isinstance(self.right_planner, CuroboPlanner):
-                self.set_planner(scene=scene)
+            if CUROBO_AVAILABLE:
+                if not isinstance(self.left_planner, CuroboPlanner) or not isinstance(self.right_planner, CuroboPlanner):
+                    self.set_planner(scene=scene)
 
         self.init_joints()
 
@@ -264,41 +267,62 @@ class Robot:
             abs_left_curobo_yml_path = abs_left_curobo_yml_path.replace("curobo.yml", "curobo_left.yml")
             abs_right_curobo_yml_path = abs_right_curobo_yml_path.replace("curobo.yml", "curobo_right.yml")
 
-        if not self.communication_flag:
-            self.left_planner = CuroboPlanner(self.left_entity_origion_pose,
-                                              self.left_arm_joints_name,
-                                              [joint.get_name() for joint in self.left_entity.get_active_joints()],
-                                              yml_path=abs_left_curobo_yml_path)
-            self.right_planner = CuroboPlanner(self.right_entity_origion_pose,
-                                               self.right_arm_joints_name,
-                                               [joint.get_name() for joint in self.right_entity.get_active_joints()],
-                                               yml_path=abs_right_curobo_yml_path)
+        if CUROBO_AVAILABLE:
+            if not self.communication_flag:
+                self.left_planner = CuroboPlanner(self.left_entity_origion_pose,
+                                                  self.left_arm_joints_name,
+                                                  [joint.get_name() for joint in self.left_entity.get_active_joints()],
+                                                  yml_path=abs_left_curobo_yml_path)
+                self.right_planner = CuroboPlanner(self.right_entity_origion_pose,
+                                                   self.right_arm_joints_name,
+                                                   [joint.get_name() for joint in self.right_entity.get_active_joints()],
+                                                   yml_path=abs_right_curobo_yml_path)
+            else:
+                self.left_conn, left_child_conn = mp.Pipe()
+                self.right_conn, right_child_conn = mp.Pipe()
+
+                left_args = {
+                    "origin_pose": self.left_entity_origion_pose,
+                    "joints_name": self.left_arm_joints_name,
+                    "all_joints": [joint.get_name() for joint in self.left_entity.get_active_joints()],
+                    "yml_path": abs_left_curobo_yml_path
+                }
+
+                right_args = {
+                    "origin_pose": self.right_entity_origion_pose,
+                    "joints_name": self.right_arm_joints_name,
+                    "all_joints": [joint.get_name() for joint in self.right_entity.get_active_joints()],
+                    "yml_path": abs_right_curobo_yml_path
+                }
+
+                self.left_proc = mp.Process(target=planner_process_worker, args=(left_child_conn, left_args))
+                self.right_proc = mp.Process(target=planner_process_worker, args=(right_child_conn, right_args))
+
+                self.left_proc.daemon = True
+                self.right_proc.daemon = True
+
+                self.left_proc.start()
+                self.right_proc.start()
         else:
-            self.left_conn, left_child_conn = mp.Pipe()
-            self.right_conn, right_child_conn = mp.Pipe()
-
-            left_args = {
-                "origin_pose": self.left_entity_origion_pose,
-                "joints_name": self.left_arm_joints_name,
-                "all_joints": [joint.get_name() for joint in self.left_entity.get_active_joints()],
-                "yml_path": abs_left_curobo_yml_path
-            }
-
-            right_args = {
-                "origin_pose": self.right_entity_origion_pose,
-                "joints_name": self.right_arm_joints_name,
-                "all_joints": [joint.get_name() for joint in self.right_entity.get_active_joints()],
-                "yml_path": abs_right_curobo_yml_path
-            }
-
-            self.left_proc = mp.Process(target=planner_process_worker, args=(left_child_conn, left_args))
-            self.right_proc = mp.Process(target=planner_process_worker, args=(right_child_conn, right_args))
-
-            self.left_proc.daemon = True
-            self.right_proc.daemon = True
-
-            self.left_proc.start()
-            self.right_proc.start()
+            self.communication_flag = False
+            self.left_planner = MplibPlanner(
+                self.left_urdf_path,
+                self.left_srdf_path,
+                self.left_move_group,
+                self.left_entity_origion_pose,
+                self.left_entity,
+                self.left_planner_type,
+                scene,
+            )
+            self.right_planner = MplibPlanner(
+                self.right_urdf_path,
+                self.right_srdf_path,
+                self.right_move_group,
+                self.right_entity_origion_pose,
+                self.right_entity,
+                self.right_planner_type,
+                scene,
+            )
 
         if self.need_topp:
             self.left_mplib_planner = MplibPlanner(

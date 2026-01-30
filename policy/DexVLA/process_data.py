@@ -14,14 +14,17 @@ task_prompt = {
 "place_object_scale": "Place the object onto the scale.",
 "place_phone_stand": "Place phone onto stand using multi-angle desk images to determine positions and plan actions.",
 "stack_blocks_three": "Move the red blocks to center of the table and stack the green block on the red block ,and stack the blue block on the green block.",
+"place_empty_cup": "Use an arm to place the empty cup on the coaster.",
 }
 task_reasoning = {
     "place_object_scale": 0,
-    "stack_blocks_three": 1
+    "stack_blocks_three": 1,
+    "place_empty_cup": 2
 }
 all_reasoning = [
     ["Pick up the object and place the object onto the scale."],
     ["Move the red blocks to center of the table and stack the green block on the red block ,and stack the blue block on the green block."],
+    ["Pick up the empty cup and place it on the coaster."],
 ]
 
 def load_hdf5(dataset_path):

@@ -312,7 +312,26 @@ def restore_params(
 
     with ocp.PyTreeCheckpointer() as ckptr:
         metadata = ckptr.metadata(params_path)
-        item = {"params": metadata["params"]}
+        
+        # 兼容新版本 orbax-checkpoint，metadata 可能是 StepMetadata 对象而非字典
+        if hasattr(metadata, 'item_metadata'):
+            # 新版本 orbax-checkpoint
+            item_metadata = metadata.item_metadata
+            if hasattr(item_metadata, 'get'):
+                item = {"params": item_metadata.get("params", item_metadata)}
+            elif hasattr(item_metadata, 'params'):
+                item = {"params": item_metadata.params}
+            else:
+                item = {"params": item_metadata}
+        elif isinstance(metadata, dict):
+            # 旧版本 orbax-checkpoint
+            item = {"params": metadata["params"]}
+        else:
+            # 尝试直接使用 metadata
+            if hasattr(metadata, 'params'):
+                item = {"params": metadata.params}
+            else:
+                item = {"params": metadata}
 
         params = ckptr.restore(
             params_path,

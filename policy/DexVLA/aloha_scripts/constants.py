@@ -1,4 +1,3 @@
-
 # DATA_DIR = './datasets'
 DATA_DIR = "/home/h5py_data/"
 PRETRAIN_DIR = '/data/team/'
@@ -9,6 +8,12 @@ TASK_CONFIGS = {
         'episode_len': 500, 
         'camera_names': ['cam_high', 'cam_left_wrist', 'cam_right_wrist'],
         "sample_weights": [1, 1]
+    },
+    "place_empty_cup": {
+        'dataset_dir': ["/vepfs-mlp2/mlp-public/haoce/zxr/RoboTwin-BiPi05/policy/DexVLA/data/sim-place_empty_cup/demo_clean-50"],
+        'episode_len': 500,
+        'camera_names': ['cam_high', 'cam_left_wrist', 'cam_right_wrist'],
+        "sample_weights": [1]
     },
 }
 

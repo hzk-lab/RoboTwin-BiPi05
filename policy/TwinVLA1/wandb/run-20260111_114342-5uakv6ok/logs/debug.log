@@ -1,0 +1,23 @@
+2026-01-11 11:43:42,127 INFO    MainThread:1305780 [wandb_setup.py:_flush():68] Current SDK version is 0.19.1
+2026-01-11 11:43:42,128 INFO    MainThread:1305780 [wandb_setup.py:_flush():68] Configure stats pid to 1305780
+2026-01-11 11:43:42,128 INFO    MainThread:1305780 [wandb_setup.py:_flush():68] Loading settings from /root/.config/wandb/settings
+2026-01-11 11:43:42,128 INFO    MainThread:1305780 [wandb_setup.py:_flush():68] Loading settings from /vepfs-mlp2/mlp-public/haoce/zxr/RoboTwin-BiPi05/policy/TwinVLA1/wandb/settings
+2026-01-11 11:43:42,128 INFO    MainThread:1305780 [wandb_setup.py:_flush():68] Loading settings from environment variables
+2026-01-11 11:43:42,128 INFO    MainThread:1305780 [wandb_init.py:_log_setup():528] Logging user logs to /vepfs-mlp2/mlp-public/haoce/zxr/RoboTwin-BiPi05/policy/TwinVLA1/wandb/run-20260111_114342-5uakv6ok/logs/debug.log
+2026-01-11 11:43:42,128 INFO    MainThread:1305780 [wandb_init.py:_log_setup():529] Logging internal logs to /vepfs-mlp2/mlp-public/haoce/zxr/RoboTwin-BiPi05/policy/TwinVLA1/wandb/run-20260111_114342-5uakv6ok/logs/debug-internal.log
+2026-01-11 11:43:42,128 INFO    MainThread:1305780 [wandb_init.py:init():644] calling init triggers
+2026-01-11 11:43:42,128 INFO    MainThread:1305780 [wandb_init.py:init():650] wandb.init called with sweep_config: {}
+config: {'name': 'pi0_base_aloha_robotwin_lora', 'project_name': 'openpi', 'exp_name': 'shake_bottle_horizontally-demo_clean-50_right', 'model': {'action_dim': 32, 'action_horizon': 50, 'max_token_len': 48, 'dtype': 'bfloat16', 'paligemma_variant': 'gemma_2b_lora', 'action_expert_variant': 'gemma_300m_lora'}, 'weight_loader': {'params_path': 's3://openpi-assets/checkpoints/pi0_base/params'}, 'lr_schedule': {'warmup_steps': 1000, 'peak_lr': 2.5e-05, 'decay_steps': 30000, 'decay_lr': 2.5e-06}, 'optimizer': {'b1': 0.9, 'b2': 0.95, 'eps': 1e-08, 'weight_decay': 1e-10, 'clip_gradient_norm': 1.0}, 'ema_decay': 0.99, 'freeze_filter': All(PathRegex(pattern=re.compile('.*llm.*'), sep='/'), Not(PathRegex(pattern=re.compile('.*lora.*'), sep='/'))), 'data': {'repo_id': 'shake_bottle_horizontally-demo_clean-50', 'assets': {'assets_dir': None, 'asset_id': None}, 'base_config': {'repo_id': None, 'asset_id': None, 'norm_stats': None, 'repack_transforms': {'inputs': (), 'outputs': ()}, 'data_transforms': {'inputs': (), 'outputs': ()}, 'model_transforms': {'inputs': (), 'outputs': ()}, 'use_quantile_norm': False, 'action_sequence_keys': ('actions',), 'prompt_from_task': True, 'local_files_only': True}, 'use_delta_joint_actions': True, 'default_prompt': None, 'adapt_to_pi': False, 'repack_transforms': {'inputs': [{'structure': {'images': {'cam_high': 'observation.images.cam_high', 'cam_left_wrist': 'observation.images.cam_left_wrist', 'cam_right_wrist': 'observation.images.cam_right_wrist'}, 'state': 'observation.state', 'actions': 'action', 'prompt': 'prompt'}}], 'outputs': ()}, 'action_sequence_keys': ('action',)}, 'assets_base_dir': './assets', 'checkpoint_base_dir': '/c20250502/zxr/checkpoints', 'seed': 42, 'batch_size': 32, 'num_workers': 2, 'num_train_steps': 30000, 'log_interval': 100, 'save_interval': 5000, 'keep_period': 5000, 'overwrite': True, 'resume': False, 'wandb_enabled': True, 'policy_metadata': None, 'fsdp_devices': 1}
+2026-01-11 11:43:42,128 INFO    MainThread:1305780 [wandb_init.py:init():680] starting backend
+2026-01-11 11:43:42,128 INFO    MainThread:1305780 [wandb_init.py:init():684] sending inform_init request
+2026-01-11 11:43:42,130 INFO    MainThread:1305780 [backend.py:_multiprocessing_setup():104] multiprocessing start_methods=fork,spawn,forkserver, using: spawn
+2026-01-11 11:43:42,130 INFO    MainThread:1305780 [wandb_init.py:init():697] backend started and connected
+2026-01-11 11:43:42,133 INFO    MainThread:1305780 [wandb_init.py:init():790] updated telemetry
+2026-01-11 11:43:42,138 INFO    MainThread:1305780 [wandb_init.py:init():822] communicating run to backend with 90.0 second timeout
+2026-01-11 11:43:43,050 INFO    MainThread:1305780 [wandb_init.py:init():874] starting run threads in backend
+2026-01-11 11:43:43,262 INFO    MainThread:1305780 [wandb_run.py:_console_start():2374] atexit reg
+2026-01-11 11:43:43,263 INFO    MainThread:1305780 [wandb_run.py:_redirect():2224] redirect: wrap_raw
+2026-01-11 11:43:43,263 INFO    MainThread:1305780 [wandb_run.py:_redirect():2289] Wrapping output streams.
+2026-01-11 11:43:43,263 INFO    MainThread:1305780 [wandb_run.py:_redirect():2314] Redirects installed.
+2026-01-11 11:43:43,265 INFO    MainThread:1305780 [wandb_init.py:init():916] run started, returning control to user process
+2026-01-11 11:43:52,525 WARNING MsgRouterThr:1305780 [router.py:message_loop():75] message_loop has been closed

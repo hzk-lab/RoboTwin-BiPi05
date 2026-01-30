@@ -1,0 +1,14 @@
+11:17:32.494 [I] Norm stats not found in /data0/users/haoce/RoboTwin/policy/pi0/assets/pi0_base_aloha_robotwin_lora/shake_bottle_horizontally-demo_clean-50, skipping. (1295692:config.py:164)
+Resolving data files: 100%|███████████████████████████████████████████████████████████████████████████████████████████| 50/50 [00:00<00:00, 208464.41it/s]
+Traceback (most recent call last):
+  File "/vepfs-mlp2/mlp-public/haoce/zxr/RoboTwin-BiPi05/policy/TwinVLA1/scripts/train_dual_vla.py", line 469, in <module>
+    main(args)
+  File "/vepfs-mlp2/mlp-public/haoce/zxr/RoboTwin-BiPi05/policy/TwinVLA1/scripts/train_dual_vla.py", line 407, in main
+    data_loader = _data_loader.create_data_loader(
+                  ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/vepfs-mlp2/mlp-public/haoce/zxr/RoboTwin-BiPi05/policy/pi0/src/openpi/training/data_loader.py", line 155, in create_data_loader
+    dataset = transform_dataset(dataset, data_config, skip_norm_stats=skip_norm_stats)
+              ^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^^
+  File "/vepfs-mlp2/mlp-public/haoce/zxr/RoboTwin-BiPi05/policy/pi0/src/openpi/training/data_loader.py", line 114, in transform_dataset
+    raise ValueError("Normalization stats not found. "
+ValueError: Normalization stats not found. Make sure to run `scripts/compute_norm_stats.py --config-name=<your-config>`.

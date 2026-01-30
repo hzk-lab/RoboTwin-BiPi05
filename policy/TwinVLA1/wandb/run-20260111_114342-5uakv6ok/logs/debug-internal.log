@@ -1,0 +1,16 @@
+{"time":"2026-01-11T11:43:42.135981519+03:00","level":"INFO","msg":"using version","core version":"0.19.1"}
+{"time":"2026-01-11T11:43:42.1361024+03:00","level":"INFO","msg":"created symlink","path":"/vepfs-mlp2/mlp-public/haoce/zxr/RoboTwin-BiPi05/policy/TwinVLA1/wandb/run-20260111_114342-5uakv6ok/logs/debug-core.log"}
+{"time":"2026-01-11T11:43:42.255816712+03:00","level":"INFO","msg":"created new stream","id":"5uakv6ok"}
+{"time":"2026-01-11T11:43:42.255879441+03:00","level":"INFO","msg":"stream: started","id":"5uakv6ok"}
+{"time":"2026-01-11T11:43:42.255921383+03:00","level":"INFO","msg":"writer: Do: started","stream_id":"5uakv6ok"}
+{"time":"2026-01-11T11:43:42.256016442+03:00","level":"INFO","msg":"sender: started","stream_id":"5uakv6ok"}
+{"time":"2026-01-11T11:43:42.255936324+03:00","level":"INFO","msg":"handler: started","stream_id":"5uakv6ok"}
+{"time":"2026-01-11T11:43:43.057266562+03:00","level":"INFO","msg":"Starting system monitor"}
+{"time":"2026-01-11T11:43:52.524710987+03:00","level":"INFO","msg":"stream: closing","id":"5uakv6ok"}
+{"time":"2026-01-11T11:43:52.524802308+03:00","level":"INFO","msg":"Stopping system monitor"}
+{"time":"2026-01-11T11:43:52.525755665+03:00","level":"INFO","msg":"Stopped system monitor"}
+{"time":"2026-01-11T11:43:53.966788097+03:00","level":"INFO","msg":"fileTransfer: Close: file transfer manager closed"}
+{"time":"2026-01-11T11:43:54.729215159+03:00","level":"INFO","msg":"handler: closed","stream_id":"5uakv6ok"}
+{"time":"2026-01-11T11:43:54.729240623+03:00","level":"INFO","msg":"sender: closed","stream_id":"5uakv6ok"}
+{"time":"2026-01-11T11:43:54.729238852+03:00","level":"INFO","msg":"writer: Close: closed","stream_id":"5uakv6ok"}
+{"time":"2026-01-11T11:43:54.729505759+03:00","level":"INFO","msg":"stream: closed","id":"5uakv6ok"}
